@@ -2,7 +2,15 @@ import SwiftUI
 
 @main
 struct FloatingBoardApp: App {
-    @State private var container = DependencyContainer()
+    private let container: DependencyContainer
+
+    init() {
+        let container = DependencyContainer()
+        container.globalHotkeyManager.start {
+            container.showPromptBuilder()
+        }
+        self.container = container
+    }
 
     var body: some Scene {
         MenuBarExtra("FloatingBoard", systemImage: "sparkles") {
