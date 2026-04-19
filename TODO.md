@@ -175,3 +175,98 @@ UI 목표:
 
 원칙:
 - Phase 1 구현 중 위 항목이 새로 끼어들면 범위 확장으로 간주
+
+## 12. Phase 2 목표
+
+목표: 생성된 프롬프트를 바로 검토하고 수정 가능하게 만들고, 앱 재실행 후에도 필요한 상태를 복원한다.  
+범위: editable draft, preview/edit mode, 상태 복원, 편집/재조립 충돌 규칙.  
+제외: LLM refine, 번역, 참고 문서 연결.
+
+완료 기준:
+- 사용자가 base prompt를 직접 수정할 수 있다
+- 선택값이 바뀌면 base prompt와 편집본의 관계가 일관되게 유지된다
+- 앱 재실행 후 draft와 선택 상태를 복원할 수 있다
+
+## 13. 편집 모델 정의
+
+- [ ] `GeneratedPrompt` 또는 동등한 편집 대상 모델 추가
+- [ ] `base prompt`와 `edited prompt`를 구분하는 상태 모델 정의
+- [ ] 현재 편집 source-of-truth 규칙 확정
+  - [ ] base prompt
+  - [ ] user edited prompt
+- [ ] 편집 상태 dirty flag 추가
+
+완료 기준:
+- "자동 생성 결과"와 "사용자 편집본"이 코드상에서 분리된다
+
+## 14. Preview / Edit 모드 전환
+
+- [ ] `PromptPreviewView`를 read-only / editable 모드로 확장
+- [ ] preview mode에서 selection 기반 결과 표시
+- [ ] edit mode에서 텍스트 직접 수정 가능
+- [ ] read-only와 edit mode 전환 UI 추가
+- [ ] 현재 모드가 무엇인지 명확한 표시 추가
+
+완료 기준:
+- 사용자는 generated prompt를 직접 수정하고 다시 볼 수 있다
+
+## 15. 편집/재조립 충돌 규칙
+
+- [ ] 소주제 변경 시 동작 정의
+- [ ] 키워드 변경 시 동작 정의
+- [ ] 초안 변경 시 동작 정의
+- [ ] 편집본이 있는 상태에서 재조립 시 정책 결정
+  - [ ] 자동 덮어쓰기 금지
+  - [ ] 편집본 유지 + base prompt만 갱신
+  - [ ] 필요 시 "Regenerate from selections" 액션 제공
+- [ ] stale/generated/edited 상태 표기 방법 정의
+
+완료 기준:
+- 사용자가 편집한 내용을 의도치 않게 잃지 않는다
+- 선택값 변경 후 어떤 텍스트가 최신인지 항상 알 수 있다
+
+## 16. 상태 복원
+
+- [ ] `PromptDraftRepository` 프로토콜 정의
+- [ ] 로컬 저장 구현 (`UserDefaults` 또는 파일) 추가
+- [ ] 저장 대상 정의
+  - [ ] selected topic
+  - [ ] selected subtopic
+  - [ ] selected keywords
+  - [ ] user draft text
+  - [ ] edited prompt text
+- [ ] 저장 제외 대상 정의
+  - [ ] copy feedback message
+  - [ ] panel visibility
+  - [ ] 임시 에러 상태
+- [ ] 앱 시작 시 복원 연결
+
+완료 기준:
+- 앱 재실행 후 Phase 2 범위의 편집 작업을 이어갈 수 있다
+
+## 17. ViewModel 확장
+
+- [ ] `PromptBuilderViewModel`에 editable text 상태 추가
+- [ ] generated prompt 업데이트와 edited prompt 유지 규칙 반영
+- [ ] restore/save 트리거 추가
+- [ ] mode 전환 시 preview text source 변경
+
+완료 기준:
+- ViewModel 하나로 preview, edit, restore 흐름이 관리된다
+
+## 18. Phase 2 검증
+
+- [ ] 앱 실행 후 기존 draft 복원 확인
+- [ ] generated -> edit mode 전환 확인
+- [ ] edit 후 selection 변경 시 충돌 규칙 확인
+- [ ] 앱 재실행 후 edited prompt 복원 확인
+- [ ] build 성공
+- [ ] targeted tests 추가 및 통과
+
+테스트 후보:
+- [ ] 편집본 존재 시 selection 변경 규칙 테스트
+- [ ] 저장/복원 테스트
+- [ ] mode 전환 테스트
+
+완료 기준:
+- "생성 -> 검토 -> 직접 수정 -> 재실행 후 이어서 작업" 흐름이 성립한다
