@@ -6,26 +6,26 @@
 
 ## 0. 준비
 
-- [ ] 현재 Xcode 템플릿 구조 확인
-- [ ] `docs/spec.md`, `docs/coding.json`, `docs/prompt-examples.md`를 구현 기준선으로 고정
-- [ ] Phase 1 범위 밖 기능은 구현하지 않기로 명시
+- [x] 현재 Xcode 템플릿 구조 확인
+- [x] `docs/spec.md`, `docs/coding.json`, `docs/prompt-examples.md`를 구현 기준선으로 고정
+- [x] Phase 1 범위 밖 기능은 구현하지 않기로 명시
 
 완료 기준:
 - 구현 시작 전에 "이번 단계에서는 LLM/문서 자산/번역을 하지 않는다"는 범위가 분명해야 함
 
 ## 1. 템플릿 제거 및 프로젝트 재구성
 
-- [ ] `Item.swift` 제거
-- [ ] `ContentView.swift` 템플릿 UI 제거
-- [ ] `floatingboardApp.swift`에서 SwiftData 템플릿 코드 제거
-- [ ] Feature-First 폴더 구조 생성
-- [ ] 기본 파일 배치:
-  - [ ] `App/`
-  - [ ] `Domain/`
-  - [ ] `Data/`
-  - [ ] `Presentation/`
-  - [ ] `Infrastructure/`
-  - [ ] `Resources/PromptTaxonomy/`
+- [x] `Item.swift` 제거
+- [x] `ContentView.swift` 템플릿 UI 제거
+- [x] `floatingboardApp.swift`에서 SwiftData 템플릿 코드 제거
+- [x] Feature-First 폴더 구조 생성
+- [x] 기본 파일 배치:
+  - [x] `App/`
+  - [x] `Domain/`
+  - [x] `Data/`
+  - [x] `Presentation/`
+  - [x] `Infrastructure/`
+  - [x] `Resources/PromptTaxonomy/`
 
 완료 기준:
 - 더 이상 템플릿용 `timestamp`/`NavigationSplitView` 구조가 남아 있지 않음
@@ -33,12 +33,12 @@
 
 ## 2. 앱 엔트리와 윈도잉 골격
 
-- [ ] 메뉴바 진입 방식 결정
-  - [ ] `MenuBarExtra` 기반 또는 `NSStatusItem` 기반 중 하나로 확정
-- [ ] `floatingboardApp.swift`를 메뉴바 앱 구조로 전환
-- [ ] `FloatingPanel` 또는 `FloatingPanelController` 골격 생성
-- [ ] 전역 단축키 진입점 파일 생성
-- [ ] 패널 열기/닫기 기본 동작 연결
+- [x] 메뉴바 진입 방식 결정
+  - [x] `MenuBarExtra` 기반 또는 `NSStatusItem` 기반 중 하나로 확정
+- [x] `floatingboardApp.swift`를 메뉴바 앱 구조로 전환
+- [x] `FloatingPanel` 또는 `FloatingPanelController` 골격 생성
+- [x] 전역 단축키 진입점 파일 생성
+- [x] 패널 열기/닫기 기본 동작 연결
 
 완료 기준:
 - 앱 실행 시 메뉴바 진입이 가능함
