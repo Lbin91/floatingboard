@@ -1,6 +1,6 @@
 # Prompt Examples Draft
 
-이 문서는 [`coding.json`](/Users/bongjinlee/Documents/Project/bots/floatingboard/docs/coding.json) 초안을 검증하기 위한 샘플 세트다.  
+이 문서는 [`coding.json`](./coding.json) 초안을 검증하기 위한 샘플 세트다.  
 목적은 "구조가 맞는가"를 보는 것이지, 문장을 최종 확정하는 것이 아니다.
 
 ## Example 1: 오류 개선
