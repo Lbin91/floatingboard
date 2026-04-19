@@ -11,9 +11,10 @@ final class PromptBuilderViewModel {
     private(set) var taxonomy: PromptTaxonomy?
     private(set) var topics: [Topic] = []
     private(set) var subtopics: [Subtopic] = []
-    private(set) var previewText: String = ""
     private(set) var errorMessage: String?
     private(set) var copyFeedbackMessage: String?
+    private(set) var generatedPrompt = GeneratedPrompt()
+    private(set) var previewMode: PromptPreviewMode = .generated
 
     var selectedTopicID: TopicID = .coding {
         didSet { refreshSubtopics() }
@@ -29,6 +30,25 @@ final class PromptBuilderViewModel {
 
     var userDraftText: String = "" {
         didSet { rebuildPreview() }
+    }
+
+    var editedPromptText: String {
+        get { generatedPrompt.displayedEditedText }
+        set {
+            generatedPrompt.editedText = newValue
+            generatedPrompt.hasEditableDraft = true
+            generatedPrompt.isEditedDirty = newValue != generatedPrompt.baseText
+            generatedPrompt.isEditedOutdated = newValue != generatedPrompt.baseText
+        }
+    }
+
+    var previewText: String {
+        switch previewMode {
+        case .generated:
+            return generatedPrompt.displayedGeneratedText
+        case .edited:
+            return generatedPrompt.displayedEditedText
+        }
     }
 
     init(
@@ -97,6 +117,21 @@ final class PromptBuilderViewModel {
         }
     }
 
+    func switchToGeneratedMode() {
+        previewMode = .generated
+    }
+
+    func switchToEditMode() {
+        if !generatedPrompt.hasEditableDraft {
+            generatedPrompt.editedText = generatedPrompt.baseText
+            generatedPrompt.hasEditableDraft = true
+            generatedPrompt.isEditedDirty = false
+            generatedPrompt.isEditedOutdated = false
+        }
+
+        previewMode = .edited
+    }
+
     private func loadTaxonomy() {
         do {
             let taxonomy = try taxonomyRepository.loadTaxonomy()
@@ -142,11 +177,12 @@ final class PromptBuilderViewModel {
 
     private func rebuildPreview() {
         guard let taxonomy else {
-            previewText = ""
+            generatedPrompt = GeneratedPrompt()
             return
         }
 
         copyFeedbackMessage = nil
+        let previousBaseText = generatedPrompt.baseText
 
         let composition = buildPromptUseCase.execute(
             draft: PromptDraft(
@@ -158,6 +194,21 @@ final class PromptBuilderViewModel {
             taxonomy: taxonomy
         )
 
-        previewText = composition.renderedText
+        let nextBaseText = composition.renderedText
+        let baseChanged = previousBaseText != nextBaseText
+        generatedPrompt.baseText = nextBaseText
+
+        if generatedPrompt.hasEditableDraft {
+            if generatedPrompt.editedText.isEmpty {
+                generatedPrompt.editedText = previousBaseText
+            }
+
+            generatedPrompt.isEditedDirty = generatedPrompt.editedText != generatedPrompt.baseText
+            generatedPrompt.isEditedOutdated = generatedPrompt.isEditedOutdated || baseChanged
+        } else {
+            generatedPrompt.editedText = generatedPrompt.baseText
+            generatedPrompt.isEditedDirty = false
+            generatedPrompt.isEditedOutdated = false
+        }
     }
 }

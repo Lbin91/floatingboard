@@ -189,23 +189,23 @@ UI 목표:
 
 ## 13. 편집 모델 정의
 
-- [ ] `GeneratedPrompt` 또는 동등한 편집 대상 모델 추가
-- [ ] `base prompt`와 `edited prompt`를 구분하는 상태 모델 정의
-- [ ] 현재 편집 source-of-truth 규칙 확정
-  - [ ] base prompt
-  - [ ] user edited prompt
-- [ ] 편집 상태 dirty flag 추가
+- [x] `GeneratedPrompt` 또는 동등한 편집 대상 모델 추가
+- [x] `base prompt`와 `edited prompt`를 구분하는 상태 모델 정의
+- [x] 현재 편집 source-of-truth 규칙 확정
+  - [x] base prompt
+  - [x] user edited prompt
+- [x] 편집 상태 dirty flag 추가
 
 완료 기준:
 - "자동 생성 결과"와 "사용자 편집본"이 코드상에서 분리된다
 
 ## 14. Preview / Edit 모드 전환
 
-- [ ] `PromptPreviewView`를 read-only / editable 모드로 확장
-- [ ] preview mode에서 selection 기반 결과 표시
-- [ ] edit mode에서 텍스트 직접 수정 가능
-- [ ] read-only와 edit mode 전환 UI 추가
-- [ ] 현재 모드가 무엇인지 명확한 표시 추가
+- [x] `PromptPreviewView`를 read-only / editable 모드로 확장
+- [x] preview mode에서 selection 기반 결과 표시
+- [x] edit mode에서 텍스트 직접 수정 가능
+- [x] read-only와 edit mode 전환 UI 추가
+- [x] 현재 모드가 무엇인지 명확한 표시 추가
 
 완료 기준:
 - 사용자는 generated prompt를 직접 수정하고 다시 볼 수 있다
@@ -257,16 +257,16 @@ UI 목표:
 ## 18. Phase 2 검증
 
 - [ ] 앱 실행 후 기존 draft 복원 확인
-- [ ] generated -> edit mode 전환 확인
-- [ ] edit 후 selection 변경 시 충돌 규칙 확인
+- [x] generated -> edit mode 전환 확인
+- [x] edit 후 selection 변경 시 충돌 규칙 확인
 - [ ] 앱 재실행 후 edited prompt 복원 확인
 - [ ] build 성공
 - [ ] targeted tests 추가 및 통과
 
 테스트 후보:
-- [ ] 편집본 존재 시 selection 변경 규칙 테스트
+- [x] 편집본 존재 시 selection 변경 규칙 테스트
 - [ ] 저장/복원 테스트
-- [ ] mode 전환 테스트
+- [x] mode 전환 테스트
 
 완료 기준:
 - "생성 -> 검토 -> 직접 수정 -> 재실행 후 이어서 작업" 흐름이 성립한다

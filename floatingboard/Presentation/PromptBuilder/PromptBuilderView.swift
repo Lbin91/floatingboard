@@ -42,7 +42,16 @@ struct PromptBuilderView: View {
 
             PromptDraftEditorView(text: $viewModel.userDraftText)
 
-            PromptPreviewView(previewText: viewModel.previewText, errorMessage: viewModel.errorMessage)
+            PromptPreviewView(
+                previewMode: viewModel.previewMode,
+                previewText: viewModel.generatedPrompt.baseText,
+                editedText: $viewModel.editedPromptText,
+                isEditedDirty: viewModel.generatedPrompt.isEditedDirty,
+                isEditedOutdated: viewModel.generatedPrompt.isEditedOutdated,
+                errorMessage: viewModel.errorMessage,
+                onGeneratedSelected: viewModel.switchToGeneratedMode,
+                onEditedSelected: viewModel.switchToEditMode
+            )
 
             ActionBarView(
                 canCopy: !viewModel.previewText.isEmpty,

@@ -54,6 +54,40 @@ struct PromptBuilderViewModelTests {
     }
 
     @Test
+    func switchingToEditModeSeedsEditablePromptFromGeneratedPrompt() throws {
+        let viewModel = makeViewModel()
+        let generatedPreview = viewModel.previewText
+
+        viewModel.switchToEditMode()
+
+        #expect(viewModel.previewMode == .edited)
+        #expect(viewModel.editedPromptText == generatedPreview)
+    }
+
+    @Test
+    func editingPromptMarksEditedStateAsDirty() throws {
+        let viewModel = makeViewModel()
+
+        viewModel.switchToEditMode()
+        viewModel.editedPromptText = "Manual override text"
+
+        #expect(viewModel.generatedPrompt.isEditedDirty)
+        #expect(viewModel.previewText == "Manual override text")
+    }
+
+    @Test
+    func selectionChangesKeepEditedPromptAndMarkItOutdated() throws {
+        let viewModel = makeViewModel()
+
+        viewModel.switchToEditMode()
+        viewModel.editedPromptText = "Edited prompt"
+        viewModel.selectSubtopic("bugfix")
+
+        #expect(viewModel.editedPromptText == "Edited prompt")
+        #expect(viewModel.generatedPrompt.isEditedOutdated)
+    }
+
+    @Test
     func copyPreviewWritesToClipboardAndShowsFeedback() throws {
         let viewModel = makeViewModel()
         viewModel.userDraftText = "Clipboard verification draft"
