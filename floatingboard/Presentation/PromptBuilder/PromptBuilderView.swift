@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PromptBuilderView: View {
+    @Bindable var viewModel: PromptBuilderViewModel
     let onClose: () -> Void
 
     var body: some View {
@@ -9,7 +10,7 @@ struct PromptBuilderView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Prompt Builder")
                         .font(.title2.weight(.semibold))
-                    Text("Phase 1 skeleton")
+                    Text("Coding-first structured prompt builder")
                         .foregroundStyle(.secondary)
                 }
 
@@ -20,14 +21,35 @@ struct PromptBuilderView: View {
                 }
             }
 
-            Divider()
+            TopicSelectorView(
+                topics: viewModel.topics,
+                selectedTopicID: viewModel.selectedTopicID,
+                onSelect: viewModel.selectTopic
+            )
 
-            Text("The project has been restructured away from the template app. Next steps will add taxonomy loading, prompt assembly, and the real builder UI.")
-                .frame(maxWidth: .infinity, alignment: .leading)
+            SubtopicSelectorView(
+                subtopics: viewModel.subtopics,
+                selectedSubtopicID: viewModel.selectedSubtopicID,
+                onSelect: viewModel.selectSubtopic
+            )
 
-            Spacer()
+            KeywordPickerView(
+                groups: viewModel.visibleKeywordGroups,
+                keywordsForGroup: viewModel.keywords(for:),
+                isSelected: viewModel.isSelected(_:),
+                onToggle: viewModel.toggleKeyword(_:)
+            )
+
+            PromptDraftEditorView(text: $viewModel.userDraftText)
+
+            PromptPreviewView(previewText: viewModel.previewText, errorMessage: viewModel.errorMessage)
+
+            ActionBarView(
+                canCopy: !viewModel.previewText.isEmpty,
+                onCopy: viewModel.copyPreview
+            )
         }
         .padding(24)
-        .frame(minWidth: 560, minHeight: 320)
+        .frame(minWidth: 560, minHeight: 520)
     }
 }

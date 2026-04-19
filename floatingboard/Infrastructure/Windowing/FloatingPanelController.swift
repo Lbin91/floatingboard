@@ -5,11 +5,12 @@ import SwiftUI
 final class FloatingPanelController {
     private var panel: FloatingPanel?
 
-    func show() {
+    func show<Content: View>(rootView: Content) {
         if panel == nil {
             panel = makePanel()
         }
 
+        panel?.contentView = NSHostingView(rootView: rootView)
         panel?.center()
         panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -19,11 +20,11 @@ final class FloatingPanelController {
         panel?.orderOut(nil)
     }
 
-    func toggle() {
+    func toggle<Content: View>(rootView: Content) {
         if let panel, panel.isVisible {
             close()
         } else {
-            show()
+            show(rootView: rootView)
         }
     }
 
@@ -42,13 +43,6 @@ final class FloatingPanelController {
         panel.isReleasedWhenClosed = false
         panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        panel.contentView = NSHostingView(
-            rootView: PromptBuilderView(
-                onClose: { [weak panel] in
-                    panel?.orderOut(nil)
-                }
-            )
-        )
 
         return panel
     }

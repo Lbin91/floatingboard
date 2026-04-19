@@ -105,15 +105,15 @@
 
 ## 7. PromptBuilderViewModel
 
-- [ ] 현재 선택 상태 보관
-  - [ ] topic
-  - [ ] subtopic
-  - [ ] selected keywords
-  - [ ] user draft text
-- [ ] subtopic 변경 시 visible keyword 재계산
-- [ ] 선택 변경 시 base prompt 즉시 재조립
-- [ ] preview text published state 연결
-- [ ] copy action 연결
+- [x] 현재 선택 상태 보관
+  - [x] topic
+  - [x] subtopic
+  - [x] selected keywords
+  - [x] user draft text
+- [x] subtopic 변경 시 visible keyword 재계산
+- [x] 선택 변경 시 base prompt 즉시 재조립
+- [x] preview text published state 연결
+- [x] copy action 연결
 
 완료 기준:
 - 선택 상태가 바뀌면 preview가 즉시 바뀜
@@ -121,29 +121,29 @@
 
 ## 8. 최소 UI 골격
 
-- [ ] `PromptBuilderView`
-- [ ] `TopicSelectorView`
-- [ ] `SubtopicSelectorView`
-- [ ] `KeywordPickerView`
-- [ ] `PromptDraftEditorView`
-- [ ] `PromptPreviewView`
-- [ ] `ActionBarView`
+- [x] `PromptBuilderView`
+- [x] `TopicSelectorView`
+- [x] `SubtopicSelectorView`
+- [x] `KeywordPickerView`
+- [x] `PromptDraftEditorView`
+- [x] `PromptPreviewView`
+- [x] `ActionBarView`
 
 UI 목표:
-- [ ] 대주제 1개 노출
-- [ ] 소주제 단일 선택
-- [ ] 키워드 클릭 토글
-- [ ] 멀티라인 초안 입력
-- [ ] preview 표시
-- [ ] copy 버튼
+- [x] 대주제 1개 노출
+- [x] 소주제 단일 선택
+- [x] 키워드 클릭 토글
+- [x] 멀티라인 초안 입력
+- [x] preview 표시
+- [x] copy 버튼
 
 완료 기준:
 - Phase 1 핵심 플로우를 마우스/키보드로 끝까지 수행 가능
 
 ## 9. Clipboard 복사
 
-- [ ] `ClipboardManager` 구현
-- [ ] preview 또는 현재 편집 대상 텍스트 복사
+- [x] `ClipboardManager` 구현
+- [x] preview 또는 현재 편집 대상 텍스트 복사
 - [ ] 복사 성공 상태 표시 방법 결정
 
 완료 기준:

@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct MenuBarView: View {
     let container: DependencyContainer
@@ -6,7 +7,7 @@ struct MenuBarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button("Open Prompt Builder") {
-                container.floatingPanelController.show()
+                container.showPromptBuilder()
             }
 
             SettingsLink {
