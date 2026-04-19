@@ -66,7 +66,7 @@
   - [x] `TaxonomyRepository`
   - [x] `BuildPromptUseCase`
   - [x] `ClipboardManager`
-  - [ ] `PromptBuilderViewModel`
+  - [x] `PromptBuilderViewModel`
 - [x] 앱 엔트리에서 container를 주입하는 경로 결정
 
 완료 기준:
@@ -144,14 +144,14 @@ UI 목표:
 
 - [x] `ClipboardManager` 구현
 - [x] preview 또는 현재 편집 대상 텍스트 복사
-- [ ] 복사 성공 상태 표시 방법 결정
+- [x] 복사 성공 상태 표시 방법 결정
 
 완료 기준:
 - 복사 버튼 클릭 시 결과가 실제 클립보드에 들어감
 
 ## 10. Phase 1 검증
 
-- [ ] 앱 실행
+- [x] 앱 실행
 - [ ] 메뉴바 진입 확인
 - [ ] 패널 열기/닫기 확인
 - [ ] 소주제 선택 확인

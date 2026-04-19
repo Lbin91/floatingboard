@@ -46,6 +46,7 @@ struct PromptBuilderView: View {
 
             ActionBarView(
                 canCopy: !viewModel.previewText.isEmpty,
+                copyFeedbackMessage: viewModel.copyFeedbackMessage,
                 onCopy: viewModel.copyPreview
             )
         }

@@ -13,6 +13,7 @@ final class PromptBuilderViewModel {
     private(set) var subtopics: [Subtopic] = []
     private(set) var previewText: String = ""
     private(set) var errorMessage: String?
+    private(set) var copyFeedbackMessage: String?
 
     var selectedTopicID: TopicID = .coding {
         didSet { refreshSubtopics() }
@@ -86,6 +87,14 @@ final class PromptBuilderViewModel {
     func copyPreview() {
         guard !previewText.isEmpty else { return }
         clipboardManager.copy(previewText)
+        copyFeedbackMessage = "Copied to clipboard"
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.5))
+            if copyFeedbackMessage == "Copied to clipboard" {
+                copyFeedbackMessage = nil
+            }
+        }
     }
 
     private func loadTaxonomy() {
@@ -136,6 +145,8 @@ final class PromptBuilderViewModel {
             previewText = ""
             return
         }
+
+        copyFeedbackMessage = nil
 
         let composition = buildPromptUseCase.execute(
             draft: PromptDraft(
