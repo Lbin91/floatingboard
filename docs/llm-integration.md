@@ -118,6 +118,16 @@ Derived output은 항상 base prompt에 종속됩니다.
 - 현재 reference snapshot
 - 현재 request fingerprint
 
+### 4.3.1 Session Boundary
+
+MVP에서 세션 경계는 명확해야 합니다.
+
+- 패널이 열리면 세션이 시작된다
+- 패널이 닫히면 세션이 종료된다
+- 세션 종료 시 in-flight request는 취소된다
+- MVP에서는 세션 간 LLM 결과 복원을 지원하지 않는다
+- "최근 작업 다시 열기"는 후속 버전의 명시적 기능으로만 허용한다
+
 ### 4.4 Reference Snapshot
 
 LLM 호출 시점의 참고 문서 상태를 고정한 스냅샷입니다.
@@ -204,7 +214,7 @@ struct BuilderSnapshot {
 순서:
 
 1. 번역 대상 텍스트를 결정한다
-2. 일반적으로 우선순위는 `edited text > refined prompt > base prompt`
+2. 입력 텍스트의 결정 우선순위는 반드시 `edited text > refined prompt > base prompt`를 따른다
 3. active model config를 읽는다
 4. request fingerprint를 계산한다
 5. 번역 요청을 보낸다
@@ -224,6 +234,17 @@ struct BuilderSnapshot {
 - 세션당 동시에 하나의 active request만 허용
 - `refine` 중 `translate`를 누르면 먼저 refine 취소 후 새 요청 또는 버튼 비활성화 중 택일
 - MVP에서는 단순화를 위해 **직렬 실행**이 안전
+
+### 6.4 MVP Interaction Matrix
+
+| 시나리오 | MVP 동작 |
+|---------|---------|
+| refine 중 translate 클릭 | translate 버튼 비활성화 |
+| translate 중 refine 클릭 | 진행 중 translate 취소 후 refine 시작 |
+| refine 완료 후 translate 클릭 | translate source = refined prompt |
+| 사용자 편집 후 translate 클릭 | translate source = edited text |
+| 사용자 편집 후 refine 클릭 | 기본값은 base prompt 기준 재-refine, 후속 버전에서 edited text 기준 refine 옵션 검토 |
+| stale 결과가 있는 상태에서 refine 클릭 | 현재 snapshot 기준으로 새 refine 요청 |
 
 ---
 
@@ -286,8 +307,15 @@ enum ReferenceDocumentScope {
 읽기 규칙:
 - 현재 활성 문서만 읽는다
 - 존재하지 않는 파일은 제외하고 경고 상태를 남긴다
-- 텍스트 크기가 너무 크면 truncation 정책 적용
+- 총 참고 문서 원문 길이가 **8,000자** 또는 추정 **2,000 tokens**를 넘기면 truncation 정책을 적용한다
 - truncation 여부는 snapshot에 남긴다
+
+MVP truncation 규칙:
+- 문서는 현재 선택 순서대로 포함한다
+- 남은 budget보다 긴 문서를 만나면 해당 문서 본문은 **앞부분부터 남은 budget만큼만** 포함한다
+- budget 이후의 문서 본문은 포함하지 않는다
+- truncation 발생 시 snapshot에 `truncated: true`를 기록한다
+- UI에는 `MISSING REFERENCES`와 별도로 `TRUNCATED REFERENCES` 또는 inline warning을 표시한다
 
 ### 8.3 Prompt Injection Position
 
@@ -341,6 +369,7 @@ Content:
 struct LLMModelConfig: Equatable, Codable {
     let provider: AIProvider
     let modelID: String
+    let endpoint: String?   // nil이면 provider 기본 endpoint 사용
     let temperature: Double
     let maxTokens: Int
     let language: String?
@@ -372,6 +401,7 @@ stale 처리되는 것:
 
 - provider 변경
 - modelID 변경
+- endpoint 변경
 - temperature 변경
 - maxTokens 변경
 - 번역 언어 변경
@@ -394,24 +424,33 @@ stale 처리되는 것:
 - reference snapshot hashes
 - edited prompt source kind
 
+계산 규칙:
+- `selectedKeywordIDs`는 사전순 정렬 후 사용한다
+- reference hash 목록도 안정된 순서로 정렬 후 사용한다
+- 입력값은 canonical JSON으로 직렬화한다
+- fingerprint 해시는 `SHA-256(canonical-json-bytes)`를 사용한다
+- fingerprint는 세션 캐시 키로만 사용하고, 보안 토큰처럼 취급하지 않는다
+
 예시:
 
 ```swift
-fingerprint = hash(
-    taskKind,
-    sourceText,
-    modelConfig,
-    referenceHashes,
-    builderSnapshot.selectedKeywordIDs,
-    builderSnapshot.subtopicID
+let payload = CanonicalFingerprintPayload(
+    taskKind: taskKind,
+    sourceText: sourceText,
+    modelConfig: modelConfig,
+    referenceHashes: referenceHashes.sorted(),
+    selectedKeywordIDs: builderSnapshot.selectedKeywordIDs.sorted(),
+    subtopicID: builderSnapshot.subtopicID
 )
+
+fingerprint = sha256(canonicalJSONEncode(payload))
 ```
 
 ### 10.2 Cache Policy
 
-MVP 권장:
+MVP 결정:
 - 세션 메모리 캐시만 사용
-- 앱 재실행 후 복원은 optional
+- 앱 재실행 후 LLM 결과 복원은 지원하지 않음
 - 다른 모델 결과를 교차 재사용하지 않음
 
 캐시 재사용 가능 조건:
@@ -460,6 +499,91 @@ Translate용 system rule에 반드시 포함할 것:
 - code block
 - file path / symbol 명칭
 
+### 11.3 Provider Request and Response Shape
+
+이 문서의 범위는 전체 API 문서가 아니라, FloatingBoard 구현에 필요한 최소 계약을 남기는 것입니다.
+
+#### Refine Request Example
+
+OpenRouter 예시:
+
+```json
+{
+  "model": "openai/gpt-4o-mini",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are refining an already-structured prompt. Preserve user intent and constraints. Do not invent new requirements."
+    },
+    {
+      "role": "user",
+      "content": "<base_prompt_and_references>"
+    }
+  ],
+  "stream": false,
+  "temperature": 0.3,
+  "max_tokens": 1800
+}
+```
+
+Ollama 예시:
+
+```json
+{
+  "model": "llama3.2",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are refining an already-structured prompt. Preserve user intent and constraints. Do not invent new requirements."
+    },
+    {
+      "role": "user",
+      "content": "<base_prompt_and_references>"
+    }
+  ],
+  "stream": false,
+  "options": {
+    "temperature": 0.3
+  }
+}
+```
+
+#### Translate Request Example
+
+```json
+{
+  "model": "openai/gpt-4o-mini",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Translate faithfully. Preserve structure and constraints. Do not summarize."
+    },
+    {
+      "role": "user",
+      "content": "<source_text_for_translation>"
+    }
+  ],
+  "stream": false,
+  "temperature": 0.1,
+  "max_tokens": 1800
+}
+```
+
+#### Response Extraction Rule
+
+- OpenRouter/OpenAI-compatible 응답은 `choices[0].message.content`를 1차 추출 경로로 사용한다
+- Ollama chat 응답은 `message.content`를 1차 추출 경로로 사용한다
+- 비어 있는 content는 malformed response로 처리한다
+- 복수 choice가 와도 MVP에서는 첫 번째만 사용한다
+
+#### Error Mapping Rule
+
+- `401` 또는 인증 실패: `apiKeyMissing` 또는 `authenticationFailed`
+- `408` 또는 timeout: `timeout`
+- `429`: `rateLimited`
+- `5xx`: `providerUnavailable`
+- 파싱 실패 또는 content 없음: `malformedResponse`
+
 ---
 
 ## 12. Failure Handling
@@ -480,12 +604,18 @@ Translate용 system rule에 반드시 포함할 것:
 - 에러는 destructive modal보다 inline error + retry가 적합
 - stale 상태는 error가 아니라 재생성 필요 상태
 
+MVP UI 계약:
+- refine/translate 실패 시 preview 하단에 inline error caption을 표시한다
+- retry는 해당 액션 버튼 재활성화로 제공한다
+- rate limit은 inline warning 또는 toast로 알린다
+- stale 상태는 error 색이 아니라 warning 또는 neutral badge로 표현한다
+
 ### 12.3 Retry Rules
 
 MVP 권장:
 - 자동 재시도 없음 또는 1회 이하
 - 사용자 명시 retry 우선
-- rate limit은 짧은 안내 후 수동 재시도
+- rate limit은 toast 또는 inline warning을 노출한 뒤 수동 재시도
 
 ---
 
@@ -552,7 +682,8 @@ MVP 권장:
 - reference file 변경은 derived output만 stale 처리
 - model 변경은 derived output만 stale 처리
 - base prompt는 항상 로컬 조립 결과를 source of truth로 유지
-- 캐시는 세션 단위 fingerprint 기반으로 제한
+- 캐시는 세션 메모리 내 fingerprint 기반으로 제한
+- 앱 재실행 후 LLM 결과 복원은 MVP에서 지원하지 않음
 
 이 문서의 목적은 LLM을 크게 설계하자는 것이 아니라,  
 **작게 시작하되 나중에 꼬이지 않도록 지금 필요한 계약을 먼저 고정하는 것**입니다.

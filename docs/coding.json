@@ -1,0 +1,893 @@
+{
+  "schemaVersion": 1,
+  "topics": [
+    {
+      "id": "coding",
+      "title": "코딩",
+      "summary": "소프트웨어 설계, 수정, 구현, 검증을 위한 프롬프트 작성",
+      "defaultSubtopicID": "implementation",
+      "sortOrder": 1
+    }
+  ],
+  "sectionDefinitions": [
+    {
+      "id": "situation",
+      "title": "Current Situation"
+    },
+    {
+      "id": "taskType",
+      "title": "Task Type"
+    },
+    {
+      "id": "focus",
+      "title": "Focus / Priorities"
+    },
+    {
+      "id": "constraints",
+      "title": "Constraints"
+    },
+    {
+      "id": "expectedOutput",
+      "title": "Expected Output"
+    },
+    {
+      "id": "verification",
+      "title": "Verification Requirements"
+    },
+    {
+      "id": "userDraft",
+      "title": "User Draft"
+    },
+    {
+      "id": "references",
+      "title": "References"
+    },
+    {
+      "id": "finalInstruction",
+      "title": "Final Instruction"
+    }
+  ],
+  "keywordGroups": [
+    {
+      "id": "context",
+      "title": "작업 대상",
+      "displayOrder": 1,
+      "maxVisibleKeywords": 4
+    },
+    {
+      "id": "priority",
+      "title": "우선순위",
+      "displayOrder": 2,
+      "maxVisibleKeywords": 3
+    },
+    {
+      "id": "constraint",
+      "title": "제약조건",
+      "displayOrder": 3,
+      "maxVisibleKeywords": 4
+    },
+    {
+      "id": "output",
+      "title": "출력 방식",
+      "displayOrder": 4,
+      "maxVisibleKeywords": 3
+    },
+    {
+      "id": "verification",
+      "title": "검증 요구",
+      "displayOrder": 5,
+      "maxVisibleKeywords": 3
+    }
+  ],
+  "subtopics": [
+    {
+      "id": "initial-planning",
+      "topicID": "coding",
+      "title": "최초 기획",
+      "description": "새 기능이나 구조를 처음 설계할 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "api",
+        "ui",
+        "maintainability",
+        "step-by-step-plan",
+        "checklist",
+        "impact-analysis"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "planning-revision",
+      "topicID": "coding",
+      "title": "기획 수정",
+      "description": "기존 계획이나 설계 방향을 수정할 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "api",
+        "maintainability",
+        "preserve-style",
+        "step-by-step-plan",
+        "impact-analysis"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "implementation",
+      "topicID": "coding",
+      "title": "구현 작업",
+      "description": "새로운 로직이나 기능을 실제 코드로 만들 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "swift",
+        "api",
+        "stability",
+        "preserve-style",
+        "explain-with-code",
+        "add-regression-test"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "refactor",
+      "topicID": "coding",
+      "title": "리팩토링 작업",
+      "description": "동작 보존을 전제로 구조를 정리할 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "swift",
+        "readability",
+        "maintainability",
+        "minimal-change",
+        "preserve-behavior",
+        "diff-first"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "bugfix",
+      "topicID": "coding",
+      "title": "오류 개선",
+      "description": "버그를 분석하고 수정할 때",
+      "keywordGroupIDs": [
+        "context",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "swift",
+        "api",
+        "minimal-change",
+        "preserve-style",
+        "root-cause-first",
+        "add-regression-test",
+        "diff-first"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "testing",
+      "topicID": "coding",
+      "title": "테스트",
+      "description": "테스트 전략을 세우거나 테스트 코드를 작성할 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "test-suite",
+        "stability",
+        "preserve-style",
+        "checklist",
+        "edge-cases",
+        "include-manual-checks"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "feature-addition",
+      "topicID": "coding",
+      "title": "기능 추가",
+      "description": "기존 제품에 새 기능을 안전하게 붙일 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "api",
+        "ui",
+        "stability",
+        "backward-compatible",
+        "explain-with-code",
+        "impact-analysis"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    },
+    {
+      "id": "feature-removal",
+      "topicID": "coding",
+      "title": "기능 삭제",
+      "description": "기능 제거 범위와 영향도를 검토하고 정리할 때",
+      "keywordGroupIDs": [
+        "context",
+        "priority",
+        "constraint",
+        "output",
+        "verification"
+      ],
+      "defaultKeywordIDs": [
+        "api",
+        "ui",
+        "minimal-change",
+        "backward-compatible",
+        "impact-analysis",
+        "checklist"
+      ],
+      "enabledSectionIDs": [
+        "situation",
+        "taskType",
+        "focus",
+        "constraints",
+        "expectedOutput",
+        "verification",
+        "userDraft",
+        "references",
+        "finalInstruction"
+      ]
+    }
+  ],
+  "keywords": [
+    {
+      "id": "swift",
+      "groupID": "context",
+      "type": "context",
+      "title": "Swift",
+      "promptFragment": "The work happens in a Swift codebase.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "testing"
+      ]
+    },
+    {
+      "id": "typescript",
+      "groupID": "context",
+      "type": "context",
+      "title": "TypeScript",
+      "promptFragment": "The work happens in a TypeScript codebase.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "testing"
+      ]
+    },
+    {
+      "id": "react",
+      "groupID": "context",
+      "type": "context",
+      "title": "React",
+      "promptFragment": "The work targets React components or related UI logic.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "api",
+      "groupID": "context",
+      "type": "context",
+      "title": "API",
+      "promptFragment": "The work affects API design, integration, or service logic.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "ui",
+      "groupID": "context",
+      "type": "context",
+      "title": "UI",
+      "promptFragment": "The work affects user-facing UI behavior or structure.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "cli",
+      "groupID": "context",
+      "type": "context",
+      "title": "CLI",
+      "promptFragment": "The work affects command-line behavior or tooling.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "test-suite",
+      "groupID": "context",
+      "type": "context",
+      "title": "테스트 코드",
+      "promptFragment": "The work primarily targets tests or test support code.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "testing",
+        "bugfix",
+        "refactor"
+      ]
+    },
+    {
+      "id": "readability",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "가독성",
+      "promptFragment": "Prioritize readability and clarity.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "refactor",
+        "planning-revision",
+        "implementation"
+      ]
+    },
+    {
+      "id": "stability",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "안정성",
+      "promptFragment": "Prioritize stability and low regression risk.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "testing",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "performance",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "성능",
+      "promptFragment": "Prioritize runtime performance and efficiency.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix"
+      ]
+    },
+    {
+      "id": "maintainability",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "유지보수성",
+      "promptFragment": "Prioritize maintainability and long-term simplicity.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "refactor"
+      ]
+    },
+    {
+      "id": "delivery-speed",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "빠른 전달",
+      "promptFragment": "Prioritize delivery speed while keeping the result practical.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "minimal-change",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "최소 수정",
+      "promptFragment": "Keep the change set minimal and localized.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "refactor",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "no-new-dependencies",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "새 의존성 금지",
+      "promptFragment": "Do not introduce new dependencies.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "preserve-style",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "기존 스타일 유지",
+      "promptFragment": "Preserve the existing coding style and local patterns.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "planning-revision",
+        "implementation",
+        "refactor",
+        "bugfix",
+        "testing"
+      ]
+    },
+    {
+      "id": "backward-compatible",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "하위호환 유지",
+      "promptFragment": "Keep the solution backward compatible unless explicitly stated otherwise.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "feature-addition",
+        "feature-removal",
+        "implementation"
+      ]
+    },
+    {
+      "id": "no-breaking-api",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "파괴적 API 변경 금지",
+      "promptFragment": "Avoid breaking public APIs or existing contracts.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "feature-addition",
+        "feature-removal",
+        "planning-revision"
+      ]
+    },
+    {
+      "id": "code-only",
+      "groupID": "output",
+      "type": "output",
+      "title": "코드만",
+      "promptFragment": "Return code only unless explanation is necessary.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "explain-with-code",
+      "groupID": "output",
+      "type": "output",
+      "title": "설명 포함",
+      "promptFragment": "Include both the proposed code and a concise explanation.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "diff-first",
+      "groupID": "output",
+      "type": "output",
+      "title": "diff 중심",
+      "promptFragment": "Present the result in a diff-oriented or change-focused way.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "refactor",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "step-by-step-plan",
+      "groupID": "output",
+      "type": "output",
+      "title": "단계별 계획",
+      "promptFragment": "Organize the answer as a step-by-step plan.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision"
+      ]
+    },
+    {
+      "id": "checklist",
+      "groupID": "output",
+      "type": "output",
+      "title": "체크리스트 포함",
+      "promptFragment": "Include a concise checklist or completion criteria.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "testing",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "root-cause-first",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "원인 분석 먼저",
+      "promptFragment": "Explain the root cause before proposing the fix.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "bugfix"
+      ]
+    },
+    {
+      "id": "add-regression-test",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "회귀 테스트 추가",
+      "promptFragment": "Add or propose a regression test to prevent the issue from returning.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "implementation",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "edge-cases",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "엣지 케이스 점검",
+      "promptFragment": "Call out important edge cases and how to validate them.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "testing",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "include-manual-checks",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "수동 확인 절차",
+      "promptFragment": "Include manual verification steps when useful.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "testing",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "preserve-behavior",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "기존 동작 보존",
+      "promptFragment": "Make behavior preservation explicit and identify what must not change.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "refactor",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "impact-analysis",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "영향 범위 분석",
+      "promptFragment": "Identify the likely impact area and downstream risks.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "feature-addition",
+        "feature-removal"
+      ]
+    }
+  ],
+  "visibilityRules": [
+    {
+      "subtopicID": "initial-planning",
+      "visibleGroupIDs": [
+        "context",
+        "priority",
+        "output"
+      ],
+      "visibleKeywordIDs": [
+        "api",
+        "ui",
+        "maintainability",
+        "step-by-step-plan",
+        "checklist",
+        "impact-analysis"
+      ]
+    },
+    {
+      "subtopicID": "planning-revision",
+      "visibleGroupIDs": [
+        "context",
+        "constraint",
+        "output"
+      ],
+      "visibleKeywordIDs": [
+        "api",
+        "maintainability",
+        "preserve-style",
+        "step-by-step-plan",
+        "impact-analysis"
+      ]
+    },
+    {
+      "subtopicID": "implementation",
+      "visibleGroupIDs": [
+        "context",
+        "constraint",
+        "output"
+      ],
+      "visibleKeywordIDs": [
+        "swift",
+        "api",
+        "ui",
+        "preserve-style",
+        "no-new-dependencies",
+        "explain-with-code",
+        "add-regression-test",
+        "stability"
+      ]
+    },
+    {
+      "subtopicID": "refactor",
+      "visibleGroupIDs": [
+        "priority",
+        "constraint",
+        "verification"
+      ],
+      "visibleKeywordIDs": [
+        "readability",
+        "maintainability",
+        "minimal-change",
+        "preserve-style",
+        "preserve-behavior",
+        "diff-first"
+      ]
+    },
+    {
+      "subtopicID": "bugfix",
+      "visibleGroupIDs": [
+        "context",
+        "constraint",
+        "verification"
+      ],
+      "visibleKeywordIDs": [
+        "swift",
+        "api",
+        "ui",
+        "minimal-change",
+        "preserve-style",
+        "root-cause-first",
+        "add-regression-test",
+        "edge-cases",
+        "diff-first"
+      ]
+    },
+    {
+      "subtopicID": "testing",
+      "visibleGroupIDs": [
+        "context",
+        "output",
+        "verification"
+      ],
+      "visibleKeywordIDs": [
+        "test-suite",
+        "checklist",
+        "edge-cases",
+        "include-manual-checks",
+        "stability"
+      ]
+    },
+    {
+      "subtopicID": "feature-addition",
+      "visibleGroupIDs": [
+        "context",
+        "constraint",
+        "verification"
+      ],
+      "visibleKeywordIDs": [
+        "api",
+        "ui",
+        "backward-compatible",
+        "no-new-dependencies",
+        "impact-analysis",
+        "add-regression-test",
+        "explain-with-code",
+        "stability"
+      ]
+    },
+    {
+      "subtopicID": "feature-removal",
+      "visibleGroupIDs": [
+        "context",
+        "constraint",
+        "verification"
+      ],
+      "visibleKeywordIDs": [
+        "api",
+        "ui",
+        "minimal-change",
+        "backward-compatible",
+        "impact-analysis",
+        "preserve-behavior",
+        "checklist"
+      ]
+    }
+  ],
+  "assemblyRules": {
+    "sectionOrder": [
+      "situation",
+      "taskType",
+      "focus",
+      "constraints",
+      "expectedOutput",
+      "verification",
+      "userDraft",
+      "references",
+      "finalInstruction"
+    ],
+    "emptySectionPolicy": "omit",
+    "sourceOfTruth": "local-builder",
+    "subtopicRules": [
+      {
+        "subtopicID": "initial-planning",
+        "finalInstructionTemplate": "Use the selected context and priorities to produce a practical first-pass implementation or planning prompt."
+      },
+      {
+        "subtopicID": "planning-revision",
+        "finalInstructionTemplate": "Revise the existing direction with explicit tradeoffs, updated scope, and a cleaner execution path."
+      },
+      {
+        "subtopicID": "implementation",
+        "finalInstructionTemplate": "Produce an implementation-focused prompt that is specific enough to generate concrete, usable code."
+      },
+      {
+        "subtopicID": "refactor",
+        "finalInstructionTemplate": "Produce a refactoring prompt that preserves behavior while improving structure and maintainability."
+      },
+      {
+        "subtopicID": "bugfix",
+        "finalInstructionTemplate": "Produce a bugfix prompt that explains the root cause, proposes a focused fix, and guards against regression."
+      },
+      {
+        "subtopicID": "testing",
+        "finalInstructionTemplate": "Produce a testing prompt that clarifies coverage goals, validation scope, and concrete test expectations."
+      },
+      {
+        "subtopicID": "feature-addition",
+        "finalInstructionTemplate": "Produce a feature-addition prompt that is explicit about scope, compatibility, and verification."
+      },
+      {
+        "subtopicID": "feature-removal",
+        "finalInstructionTemplate": "Produce a feature-removal prompt that is explicit about scope reduction, impact, and cleanup boundaries."
+      }
+    ]
+  }
+}
