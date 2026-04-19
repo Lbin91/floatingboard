@@ -46,14 +46,14 @@
 
 ## 3. 도메인 모델 정의
 
-- [ ] `AIProvider` enum 추가
-- [ ] `Topic`
-- [ ] `Subtopic`
-- [ ] `KeywordType`
-- [ ] `KeywordGroup`
-- [ ] `KeywordOption`
-- [ ] `PromptDraft`
-- [ ] `PromptComposition`
+- [x] `AIProvider` enum 추가
+- [x] `Topic`
+- [x] `Subtopic`
+- [x] `KeywordType`
+- [x] `KeywordGroup`
+- [x] `KeywordOption`
+- [x] `PromptDraft`
+- [x] `PromptComposition`
 
 완료 기준:
 - `docs/spec.md` 기준 핵심 엔티티가 코드에 존재함
@@ -61,13 +61,13 @@
 
 ## 4. DependencyContainer 최소 구성
 
-- [ ] `DependencyContainer` 생성
-- [ ] Phase 1에 필요한 객체 생성 책임 연결
-  - [ ] `TaxonomyRepository`
-  - [ ] `BuildPromptUseCase`
-  - [ ] `ClipboardManager`
+- [x] `DependencyContainer` 생성
+- [x] Phase 1에 필요한 객체 생성 책임 연결
+  - [x] `TaxonomyRepository`
+  - [x] `BuildPromptUseCase`
+  - [x] `ClipboardManager`
   - [ ] `PromptBuilderViewModel`
-- [ ] 앱 엔트리에서 container를 주입하는 경로 결정
+- [x] 앱 엔트리에서 container를 주입하는 경로 결정
 
 완료 기준:
 - View가 직접 repository를 생성하지 않음
@@ -75,12 +75,12 @@
 
 ## 5. Taxonomy 로딩
 
-- [ ] `docs/coding.json`을 런타임 리소스로 옮길 경로 결정
-  - [ ] `Resources/PromptTaxonomy/coding.json`
-- [ ] `TaxonomyDTO` 정의
-- [ ] `TaxonomyRepository` 프로토콜 정의
-- [ ] `LocalTaxonomyRepository` 구현
-- [ ] JSON 디코딩 테스트 또는 최소 검증 로직 추가
+- [x] `docs/coding.json`을 런타임 리소스로 옮길 경로 결정
+  - [x] `Resources/PromptTaxonomy/coding.json`
+- [x] `TaxonomyDTO` 정의
+- [x] `TaxonomyRepository` 프로토콜 정의
+- [x] `LocalTaxonomyRepository` 구현
+- [x] JSON 디코딩 테스트 또는 최소 검증 로직 추가
 
 완료 기준:
 - 앱이 `coding.json`을 읽어서 메모리 모델로 변환 가능
@@ -88,17 +88,17 @@
 
 ## 6. Prompt 조립기
 
-- [ ] `BuildPromptUseCase` 정의
-- [ ] `enabledSectionIDs` 반영
-- [ ] 빈 섹션 생략 규칙 반영
-- [ ] 키워드 타입별 슬롯 분리
-  - [ ] `context -> Current Situation`
-  - [ ] `priority -> Focus / Priorities`
-  - [ ] `constraint -> Constraints`
-  - [ ] `output -> Expected Output`
-  - [ ] `verification -> Verification Requirements`
-- [ ] `finalInstructionTemplate` 반영
-- [ ] `User Draft` 원문 보존
+- [x] `BuildPromptUseCase` 정의
+- [x] `enabledSectionIDs` 반영
+- [x] 빈 섹션 생략 규칙 반영
+- [x] 키워드 타입별 슬롯 분리
+  - [x] `context -> Current Situation`
+  - [x] `priority -> Focus / Priorities`
+  - [x] `constraint -> Constraints`
+  - [x] `output -> Expected Output`
+  - [x] `verification -> Verification Requirements`
+- [x] `finalInstructionTemplate` 반영
+- [x] `User Draft` 원문 보존
 
 완료 기준:
 - `docs/prompt-examples.md`의 예시 3개를 대략 재현할 수 있는 base prompt가 생성됨
