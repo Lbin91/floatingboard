@@ -88,6 +88,22 @@ UI에서는 모든 키워드가 동일한 "클릭 가능한 칩"처럼 보이지
 
 이 구분은 중요합니다. 겉보기에는 모두 태그처럼 보이지만, 실제 프롬프트 조립 시에는 각 타입이 **정해진 슬롯**에 들어가야 결과 품질이 안정됩니다.
 
+### 2.3.1 MVP 키워드 노출 원칙
+
+키워드는 많을수록 좋아 보이지만, 실제로는 선택 피로를 빠르게 증가시킵니다. 따라서 MVP에서는 "모든 가능한 키워드"를 보여주지 않고, **현재 소주제에 가장 관련도 높은 키워드만 제한적으로 노출**합니다.
+
+노출 규칙:
+- 한 소주제에서 최초 노출되는 키워드는 **총 8~12개**
+- 기본적으로 **3개 그룹까지만 우선 노출**
+- 그룹당 기본 노출 수는 **2~4개**
+- 나머지 키워드는 `더 보기` 또는 후속 버전의 확장 인터랙션으로 처리
+- 노출 키워드는 "자주 쓰이는 기본값"과 "소주제에 특화된 선택지"의 혼합이어야 함
+
+예시:
+- `오류 개선`: 원인 설명, 최소 수정, 회귀 방지, 테스트 추가, 로그 기준, Swift, API, UI
+- `리팩토링 작업`: 가독성, 구조 단순화, 동작 보존, 새 의존성 금지, diff 중심
+- `최초 기획`: 요구사항 정리, 범위 정의, 단계별 계획, 리스크 식별
+
 ### 2.4 고정 프롬프트 골격
 
 MVP에서는 최종 프롬프트를 아래 구조로 조립합니다.
@@ -103,6 +119,13 @@ MVP에서는 최종 프롬프트를 아래 구조로 조립합니다.
 9. `Final Instruction`
 
 UI는 단순하게 보여도, 내부 생성기는 이 섹션 순서를 보존해야 합니다.
+
+단, "고정 골격"은 모든 슬롯을 항상 강제로 채운다는 뜻은 아닙니다.
+
+- 선택되지 않은 슬롯은 생략 가능
+- 소주제 성격상 어색한 슬롯은 빈 채로 출력하지 않음
+- 예: `기능 삭제`에서 `Verification Requirements`가 비어 있으면 해당 섹션을 만들지 않음
+- 예: `최초 기획`에서는 `Expected Output`과 `Final Instruction` 비중이 더 크고, `Constraints`는 선택 기반으로만 생성
 
 ### 2.5 확장 방향
 
@@ -123,9 +146,9 @@ MVP 이후 고려할 수 있는 대주제:
 ### 3.1 Platform & Language
 | 항목 | 스펙 | 비고 |
 |------|------|------|
-| Platform | macOS 13.0+ (Ventura) | `MenuBarExtra`, `Settings`, 최신 SwiftUI API 활용 |
+| Platform | macOS 14.0+ (Sonoma) | `@Observable`, 최신 SwiftUI 상태 관리와 패널 UI 일관성 확보 |
 | Language | Swift 5.9+ | `async/await`, `Actor`, `@Observable` |
-| Min Deployment | macOS 13.0 | `NSPanel`, `MenuBarExtra` 안정성 |
+| Min Deployment | macOS 14.0 | `@Observable`와 최소 타겟 충돌 제거 |
 
 ### 3.2 UI Framework
 | 프레임워크 | 용도 | 상세 |
@@ -186,6 +209,24 @@ class FloatingPanel: NSPanel {
 | Prompt Draft | 로컬 파일 또는 `UserDefaults` | 최근 입력 복원 |
 | Reference Documents | 파일 시스템 + bookmark | 프로젝트/전역/외부 Markdown |
 | 앱 설정 | `@AppStorage` 또는 JSON | 단축키, 기본 동작, LLM 옵션 |
+
+#### Prompt Taxonomy Contract
+
+`coding.json`은 단순한 라벨 모음이 아니라, UI 노출과 프롬프트 조립을 동시에 제어하는 선언형 계약입니다.
+
+최소 포함 필드:
+- `topics`
+- `subtopics`
+- `keywordGroups`
+- `keywords`
+- `visibilityRules`
+- `assemblyRules`
+
+이 계약은 세 가지를 동시에 해결해야 합니다.
+
+1. 어떤 소주제에서 어떤 키워드를 기본 노출할지
+2. 각 키워드가 어떤 슬롯으로 들어갈지
+3. 특정 소주제에서 어떤 프롬프트 섹션을 우선하거나 생략할지
 
 ---
 
@@ -344,6 +385,8 @@ MVP 기본 그룹:
 - 내부적으로는 `context / priority / constraint / output / verification` 슬롯에 매핑
 - 일부 키워드는 특정 소주제에서만 노출
 - 잘못된 조합은 비활성화 또는 경고로 처리
+- 최초 노출 키워드는 소주제당 총 8~12개 범위를 유지
+- 고빈도 키워드는 기본 노출, 저빈도 키워드는 점진적 공개가 원칙
 
 ### 5.3 Prompt Draft & Composition
 
@@ -511,6 +554,8 @@ struct Subtopic: Identifiable, Codable {
     let title: String
     let description: String
     let keywordGroupIDs: [String]
+    let defaultKeywordIDs: [String]
+    let enabledSectionIDs: [String]
 }
 
 enum KeywordType: String, Codable {
@@ -527,6 +572,15 @@ struct KeywordOption: Identifiable, Codable {
     let type: KeywordType
     let title: String
     let promptFragment: String
+    let isPrimary: Bool
+    let supportedSubtopicIDs: [String]
+}
+
+struct KeywordGroup: Identifiable, Codable {
+    let id: String
+    let title: String
+    let displayOrder: Int
+    let maxVisibleKeywords: Int
 }
 
 struct PromptDraft: Codable {
@@ -563,7 +617,51 @@ struct PromptComposition {
 }
 ```
 
-### 8.2 App Settings
+### 8.2 Taxonomy JSON 예시
+
+```json
+{
+  "topics": [
+    {
+      "id": "coding",
+      "title": "코딩",
+      "summary": "소프트웨어 설계, 수정, 구현, 검증을 위한 프롬프트 작성"
+    }
+  ],
+  "subtopics": [
+    {
+      "id": "bugfix",
+      "topicID": "coding",
+      "title": "오류 개선",
+      "description": "버그를 분석하고 수정할 때",
+      "keywordGroupIDs": ["context", "constraint", "verification"],
+      "defaultKeywordIDs": ["swift", "root-cause-first", "minimal-change", "regression-test"],
+      "enabledSectionIDs": ["situation", "taskType", "constraints", "verification", "userDraft", "finalInstruction"]
+    }
+  ],
+  "keywordGroups": [
+    {
+      "id": "constraint",
+      "title": "제약조건",
+      "displayOrder": 2,
+      "maxVisibleKeywords": 4
+    }
+  ],
+  "keywords": [
+    {
+      "id": "minimal-change",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "최소 수정",
+      "promptFragment": "Keep the change set minimal and localized.",
+      "isPrimary": true,
+      "supportedSubtopicIDs": ["bugfix", "refactor", "feature-delete"]
+    }
+  ]
+}
+```
+
+### 8.3 App Settings
 ```swift
 struct AppSettings: Codable {
     var globalHotkey: String
@@ -576,7 +674,7 @@ struct AppSettings: Codable {
 }
 ```
 
-### 8.3 Prompt Assembly Contract
+### 8.4 Prompt Assembly Contract
 
 조립기는 반드시 아래 규칙을 지켜야 합니다.
 
@@ -585,6 +683,8 @@ struct AppSettings: Codable {
 - 자유 입력은 가공 전 원문도 보존
 - LLM 다듬기 전/후 결과를 구분 가능해야 함
 - 번역 결과는 원문과 별도 버전으로 유지 가능해야 함
+- `enabledSectionIDs`에 없는 섹션은 출력하지 않음
+- 빈 슬롯 제목만 남는 출력은 허용하지 않음
 
 ---
 
