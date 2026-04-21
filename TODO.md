@@ -1,4 +1,8 @@
-# Phase 1 TODO
+# FloatingBoard TODO
+
+---
+
+# Phase 1: 구조화 빌더 기반 UI ✅
 
 목표: 구조화 빌더 기반 UI를 로컬만으로 완성한다.  
 범위: 대주제/소주제/키워드/초안 입력/프롬프트 조립/복사까지.  
@@ -10,263 +14,277 @@
 - [x] `docs/spec.md`, `docs/coding.json`, `docs/prompt-examples.md`를 구현 기준선으로 고정
 - [x] Phase 1 범위 밖 기능은 구현하지 않기로 명시
 
-완료 기준:
-- 구현 시작 전에 "이번 단계에서는 LLM/문서 자산/번역을 하지 않는다"는 범위가 분명해야 함
-
 ## 1. 템플릿 제거 및 프로젝트 재구성
 
 - [x] `Item.swift` 제거
 - [x] `ContentView.swift` 템플릿 UI 제거
 - [x] `floatingboardApp.swift`에서 SwiftData 템플릿 코드 제거
 - [x] Feature-First 폴더 구조 생성
-- [x] 기본 파일 배치:
-  - [x] `App/`
-  - [x] `Domain/`
-  - [x] `Data/`
-  - [x] `Presentation/`
-  - [x] `Infrastructure/`
-  - [x] `Resources/PromptTaxonomy/`
-
-완료 기준:
-- 더 이상 템플릿용 `timestamp`/`NavigationSplitView` 구조가 남아 있지 않음
-- 앱 구조가 Prompt Builder 기준으로 재구성됨
+- [x] 기본 파일 배치: `App/`, `Domain/`, `Data/`, `Presentation/`, `Infrastructure/`, `Resources/PromptTaxonomy/`
 
 ## 2. 앱 엔트리와 윈도잉 골격
 
-- [x] 메뉴바 진입 방식 결정
-  - [x] `MenuBarExtra` 기반 또는 `NSStatusItem` 기반 중 하나로 확정
+- [x] 메뉴바 진입 방식 결정 (`MenuBarExtra`)
 - [x] `floatingboardApp.swift`를 메뉴바 앱 구조로 전환
-- [x] `FloatingPanel` 또는 `FloatingPanelController` 골격 생성
+- [x] `FloatingPanel` + `FloatingPanelController` 골격 생성
 - [x] 전역 단축키 진입점 파일 생성
 - [x] 패널 열기/닫기 기본 동작 연결
 
-완료 기준:
-- 앱 실행 시 메뉴바 진입이 가능함
-- 단축키 또는 메뉴로 패널을 열고 닫을 수 있음
-
 ## 3. 도메인 모델 정의
 
-- [x] `AIProvider` enum 추가
-- [x] `Topic`
-- [x] `Subtopic`
-- [x] `KeywordType`
-- [x] `KeywordGroup`
-- [x] `KeywordOption`
-- [x] `PromptDraft`
-- [x] `PromptComposition`
-
-완료 기준:
-- `docs/spec.md` 기준 핵심 엔티티가 코드에 존재함
-- Phase 1에 불필요한 LLM session/reference snapshot 모델은 아직 넣지 않음
+- [x] `AIProvider`, `Topic`, `Subtopic`, `KeywordType`, `KeywordGroup`, `KeywordOption`, `PromptDraft`, `PromptComposition`
 
 ## 4. DependencyContainer 최소 구성
 
 - [x] `DependencyContainer` 생성
-- [x] Phase 1에 필요한 객체 생성 책임 연결
-  - [x] `TaxonomyRepository`
-  - [x] `BuildPromptUseCase`
-  - [x] `ClipboardManager`
-  - [x] `PromptBuilderViewModel`
-- [x] 앱 엔트리에서 container를 주입하는 경로 결정
-
-완료 기준:
-- View가 직접 repository를 생성하지 않음
-- 최소한의 수동 DI 흐름이 동작함
+- [x] `TaxonomyRepository`, `BuildPromptUseCase`, `ClipboardManager`, `PromptBuilderViewModel` 연결
 
 ## 5. Taxonomy 로딩
 
-- [x] `docs/coding.json`을 런타임 리소스로 옮길 경로 결정
-  - [x] `Resources/PromptTaxonomy/coding.json`
-- [x] `TaxonomyDTO` 정의
-- [x] `TaxonomyRepository` 프로토콜 정의
-- [x] `LocalTaxonomyRepository` 구현
-- [x] JSON 디코딩 테스트 또는 최소 검증 로직 추가
-
-완료 기준:
-- 앱이 `coding.json`을 읽어서 메모리 모델로 변환 가능
-- subtopic, keyword group, keyword 목록 접근 가능
+- [x] `TaxonomyDTO`, `TaxonomyRepository` 프로토콜, `LocalTaxonomyRepository` 구현
 
 ## 6. Prompt 조립기
 
-- [x] `BuildPromptUseCase` 정의
-- [x] `enabledSectionIDs` 반영
-- [x] 빈 섹션 생략 규칙 반영
-- [x] 키워드 타입별 슬롯 분리
-  - [x] `context -> Current Situation`
-  - [x] `priority -> Focus / Priorities`
-  - [x] `constraint -> Constraints`
-  - [x] `output -> Expected Output`
-  - [x] `verification -> Verification Requirements`
-- [x] `finalInstructionTemplate` 반영
-- [x] `User Draft` 원문 보존
-
-완료 기준:
-- `docs/prompt-examples.md`의 예시 3개를 대략 재현할 수 있는 base prompt가 생성됨
+- [x] `BuildPromptUseCase` 정의 (`enabledSectionIDs`, 빈 섹션 생략, 키워드 타입별 슬롯, `finalInstructionTemplate`, `User Draft` 원문 보존)
 
 ## 7. PromptBuilderViewModel
 
-- [x] 현재 선택 상태 보관
-  - [x] topic
-  - [x] subtopic
-  - [x] selected keywords
-  - [x] user draft text
-- [x] subtopic 변경 시 visible keyword 재계산
-- [x] 선택 변경 시 base prompt 즉시 재조립
-- [x] preview text published state 연결
-- [x] copy action 연결
-
-완료 기준:
-- 선택 상태가 바뀌면 preview가 즉시 바뀜
-- 소주제 변경 시 키워드 후보가 재구성됨
+- [x] 선택 상태 보관, subtopic 변경 시 keyword 재계산, base prompt 즉시 재조립, preview text, copy action
 
 ## 8. 최소 UI 골격
 
-- [x] `PromptBuilderView`
-- [x] `TopicSelectorView`
-- [x] `SubtopicSelectorView`
-- [x] `KeywordPickerView`
-- [x] `PromptDraftEditorView`
-- [x] `PromptPreviewView`
-- [x] `ActionBarView`
-
-UI 목표:
-- [x] 대주제 1개 노출
-- [x] 소주제 단일 선택
-- [x] 키워드 클릭 토글
-- [x] 멀티라인 초안 입력
-- [x] preview 표시
-- [x] copy 버튼
-
-완료 기준:
-- Phase 1 핵심 플로우를 마우스/키보드로 끝까지 수행 가능
+- [x] `PromptBuilderView`, `TopicSelectorView`, `SubtopicSelectorView`, `KeywordPickerView`, `PromptDraftEditorView`, `PromptPreviewView`, `ActionBarView`
 
 ## 9. Clipboard 복사
 
-- [x] `ClipboardManager` 구현
-- [x] preview 또는 현재 편집 대상 텍스트 복사
-- [x] 복사 성공 상태 표시 방법 결정
-
-완료 기준:
-- 복사 버튼 클릭 시 결과가 실제 클립보드에 들어감
+- [x] `ClipboardManager` 구현, 복사 성공 상태 표시
 
 ## 10. Phase 1 검증
 
-- [x] 앱 실행
-- [ ] 메뉴바 진입 확인
-- [x] 패널 열기/닫기 확인
-- [x] 소주제 선택 확인
-- [x] 키워드 선택 확인
-- [x] 초안 입력 확인
-- [x] preview 즉시 갱신 확인
-- [x] 복사 확인
-- [ ] `docs/prompt-examples.md` 예시 3개로 수동 검증
+- [x] 앱 실행, 패널 열기/닫기, 소주제/키워드/초안/preview/복사 확인
+- [x] 빌드 성공, 테스트 통과
+- [ ] `docs/prompt-examples.md` 예시 3개로 수동 검증 (구현 후 별도 확인 필요)
 
-완료 기준:
-- LLM 없이도 "생각을 좁혀 base prompt를 만들고 복사"하는 제품 가치가 성립함
+---
 
-## 11. Phase 1 이후로 미루는 것
-
-- [ ] LLM refine
-- [ ] 영어 번역
-- [ ] 참고 문서 연결
-- [ ] 최근 작업 복원
-- [ ] locale 전환 UI
-- [ ] taxonomy 편집 UI
-
-원칙:
-- Phase 1 구현 중 위 항목이 새로 끼어들면 범위 확장으로 간주
-
-## 12. Phase 2 목표
+# Phase 2: 편집과 미리보기 ✅
 
 목표: 생성된 프롬프트를 바로 검토하고 수정 가능하게 만들고, 앱 재실행 후에도 필요한 상태를 복원한다.  
 범위: editable draft, preview/edit mode, 상태 복원, 편집/재조립 충돌 규칙.  
 제외: LLM refine, 번역, 참고 문서 연결.
 
-완료 기준:
-- 사용자가 base prompt를 직접 수정할 수 있다
-- 선택값이 바뀌면 base prompt와 편집본의 관계가 일관되게 유지된다
-- 앱 재실행 후 draft와 선택 상태를 복원할 수 있다
-
 ## 13. 편집 모델 정의
 
-- [x] `GeneratedPrompt` 또는 동등한 편집 대상 모델 추가
-- [x] `base prompt`와 `edited prompt`를 구분하는 상태 모델 정의
-- [x] 현재 편집 source-of-truth 규칙 확정
-  - [x] base prompt
-  - [x] user edited prompt
-- [x] 편집 상태 dirty flag 추가
-
-완료 기준:
-- "자동 생성 결과"와 "사용자 편집본"이 코드상에서 분리된다
+- [x] `GeneratedPrompt` 모델 추가 (base prompt / edited prompt 분리, dirty flag)
 
 ## 14. Preview / Edit 모드 전환
 
-- [x] `PromptPreviewView`를 read-only / editable 모드로 확장
-- [x] preview mode에서 selection 기반 결과 표시
-- [x] edit mode에서 텍스트 직접 수정 가능
-- [x] read-only와 edit mode 전환 UI 추가
-- [x] 현재 모드가 무엇인지 명확한 표시 추가
-
-완료 기준:
-- 사용자는 generated prompt를 직접 수정하고 다시 볼 수 있다
+- [x] `PromptPreviewView` read-only / editable 모드 확장
+- [x] mode 전환 UI + 현재 모드 표시
 
 ## 15. 편집/재조립 충돌 규칙
 
-- [ ] 소주제 변경 시 동작 정의
-- [ ] 키워드 변경 시 동작 정의
-- [ ] 초안 변경 시 동작 정의
-- [ ] 편집본이 있는 상태에서 재조립 시 정책 결정
-  - [ ] 자동 덮어쓰기 금지
-  - [ ] 편집본 유지 + base prompt만 갱신
-  - [ ] 필요 시 "Regenerate from selections" 액션 제공
-- [ ] stale/generated/edited 상태 표기 방법 정의
-
-완료 기준:
-- 사용자가 편집한 내용을 의도치 않게 잃지 않는다
-- 선택값 변경 후 어떤 텍스트가 최신인지 항상 알 수 있다
+- [x] 소주제/키워드/초안 변경 시 편집본 유지 + base prompt만 갱신
+- [x] "Regenerate from selections" 액션 제공 (`regenerateFromSelections()`)
+- [x] stale/generated/edited 상태 표기 (dirty, outdated 배지)
 
 ## 16. 상태 복원
 
-- [ ] `PromptDraftRepository` 프로토콜 정의
-- [ ] 로컬 저장 구현 (`UserDefaults` 또는 파일) 추가
-- [ ] 저장 대상 정의
-  - [ ] selected topic
-  - [ ] selected subtopic
-  - [ ] selected keywords
-  - [ ] user draft text
-  - [ ] edited prompt text
-- [ ] 저장 제외 대상 정의
-  - [ ] copy feedback message
-  - [ ] panel visibility
-  - [ ] 임시 에러 상태
-- [ ] 앱 시작 시 복원 연결
-
-완료 기준:
-- 앱 재실행 후 Phase 2 범위의 편집 작업을 이어갈 수 있다
+- [x] `PromptDraftRepository` 프로토콜 + `LocalPromptDraftRepository` 구현 (UserDefaults)
+- [x] 저장 대상: topic, subtopic, keywords, user draft, edited prompt
+- [x] 저장 제외: copy feedback, panel visibility, 임시 에러
+- [x] `GeneratedPrompt`, `PromptDraft` Codable 채택
 
 ## 17. ViewModel 확장
 
-- [ ] `PromptBuilderViewModel`에 editable text 상태 추가
-- [ ] generated prompt 업데이트와 edited prompt 유지 규칙 반영
-- [ ] restore/save 트리거 추가
-- [ ] mode 전환 시 preview text source 변경
-
-완료 기준:
-- ViewModel 하나로 preview, edit, restore 흐름이 관리된다
+- [x] `saveDraft()`, `restoreDraft()` 메서드 추가
+- [x] `DependencyContainer`에 `PromptDraftRepository` 주입
+- [x] init 시 `restoreDraft()` 호출
 
 ## 18. Phase 2 검증
 
-- [ ] 앱 실행 후 기존 draft 복원 확인
-- [x] generated -> edit mode 전환 확인
+- [x] 빌드 성공
+- [x] 기존 테스트 통과 (8개)
+- [x] 저장/복원 테스트 4개 추가 (총 16개 테스트 통과)
+- [x] generated → edit mode 전환 확인
 - [x] edit 후 selection 변경 시 충돌 규칙 확인
-- [ ] 앱 재실행 후 edited prompt 복원 확인
-- [ ] build 성공
-- [ ] targeted tests 추가 및 통과
+- [ ] 앱 재실행 후 edited prompt 복원 수동 확인
+- [ ] panel close 자동 저장 연결 (Phase 3 §25에서 처리)
 
-테스트 후보:
-- [x] 편집본 존재 시 selection 변경 규칙 테스트
-- [ ] 저장/복원 테스트
-- [x] mode 전환 테스트
+---
+
+# Phase 3: LLM 다듬기 / 영어 번역 🔜
+
+목표: 구조화 빌더에서 생성된 base prompt를 LLM으로 다듬고(refine), 영어로 번역(translate)하는 기능을 추가한다.  
+범위: AI 설정 UI, Refine/Translate UseCase, LLM 세션 상태 관리, Keychain API Key 저장, panel close 자동 저장.  
+제외: 참고 문서 연결, 다른 언어 번역, 스트리밍 응답, 세션 간 LLM 결과 복원.
 
 완료 기준:
-- "생성 -> 검토 -> 직접 수정 -> 재실행 후 이어서 작업" 흐름이 성립한다
+- LLM 없이도 기본 기능이 그대로 동작한다
+- OpenRouter/Ollama 설정 후 Refine/Translate 플로우가 완주된다
+- 네트워크 오류 시 inline error 표시, 기존 결과 유지
+
+## 19. Keychain 기반 API Key 관리
+
+- [ ] `KeychainRepository` 프로토콜 정의 (`Domain/Repositories/KeychainRepository.swift`)
+  - `func save(key: String, data: Data) throws`
+  - `func load(key: String) throws -> Data?`
+  - `func delete(key: String) throws`
+- [ ] `KeychainRepositoryImpl` 구현 (`Data/Repositories/KeychainRepositoryImpl.swift`)
+  - `Security` framework `SecItemAdd` / `SecItemCopyMatching` / `SecItemDelete`
+  - `kSecClassGenericPassword`, `kSecAttrService: "com.floatingboard"`
+  - `kSecAttrAccount`로 provider 구분 (`openrouter-api-key`, `ollama-endpoint`)
+- [ ] 단위 테스트: save → load → delete 라운드트립
+
+완료 기준: API Key를 Keychain에 저장/조회/삭제 가능, 평문 파일에 키 없음
+
+## 20. LLMModelConfig 및 AIProvider 모델 확장
+
+- [ ] `AIProvider` enum 확장 (`Domain/Entities/AIProvider.swift`)
+  - 각 provider의 기본 endpoint, 기본 model, 인증 방식 정의
+- [ ] `LLMModelConfig` struct 정의 (`Domain/Entities/LLMModelConfig.swift`)
+  - `provider`, `modelID`, `endpoint`, `temperature`, `maxTokens`
+  - `Equatable`, `Codable` 채택
+- [ ] `LLMError` enum 정의 (`Domain/Entities/LLMError.swift`)
+  - `apiKeyMissing`, `authenticationFailed`, `timeout`, `rateLimited`, `providerUnavailable`, `malformedResponse`, `cancelled`
+  - `LocalizedError` 채택 (한국어 errorDescription)
+
+완료 기준: 모델 설정과 에러 타입이 코드에 존재, Codable로 직렬화 가능
+
+## 21. AIRepository 프로토콜 + Provider 구현체
+
+- [ ] `AIRepository` 프로토콜 정의 (`Domain/Repositories/AIRepository.swift`)
+  - `func refine(prompt: String, config: LLMModelConfig) async throws -> String`
+  - `func translate(text: String, config: LLMModelConfig) async throws -> String`
+- [ ] `OpenRouterRepository` 구현 (`Data/Repositories/OpenRouterRepository.swift`)
+  - `URLSession` async/await, endpoint: `https://openrouter.ai/api/v1/chat/completions`
+  - 인증: `Authorization: Bearer <api_key>`, timeout: 연결 10초/응답 60초
+  - 요청/응답 DTO: `LLMRequest`, `LLMResponse` (`Data/DTOs/`)
+- [ ] `OllamaRepository` 구현 (`Data/Repositories/OllamaRepository.swift`)
+  - endpoint: 사용자 설정 (기본 `http://localhost:11434/api/chat`), 인증 없음
+  - Ollama 응답 파싱 (`message.content`)
+- [ ] `AIRepositoryProvider` 구현 (`Data/Repositories/AIRepositoryProvider.swift`)
+  - 현재 설정된 `AIProvider`에 따라 적절한 `AIRepository` 구현체를 반환하는 래퍼
+  - 내부에 `OpenRouterRepository`, `OllamaRepository` 인스턴스를 모두 보유
+  - 설정 변경 시 인스턴스 교체 없이 라우팅만 전환
+  - `func resolve(for provider: AIProvider) -> AIRepository`
+- [ ] 공통 에러 매핑: HTTP 상태코드 → `LLMError`
+- [ ] `RefinePromptUseCase` 구현 (`Domain/UseCases/RefinePromptUseCase.swift`)
+  - system prompt: llm-integration.md §11.1 참조
+  - `AIRepositoryProvider`를 통해 현재 설정에 맞는 구현체를 동적으로 획득
+- [ ] `TranslatePromptUseCase` 구현 (`Domain/UseCases/TranslatePromptUseCase.swift`)
+  - 번역 대상 결정 우선순위: `edited text > refined prompt > base prompt`
+- [ ] 단위 테스트: DTO 인코딩/디코딩, 에러 매핑
+
+완료 기준: 두 provider 모두 프로토콜 준수, 설정 변경 시 런타임에 Provider 스위칭 가능
+
+## 22. LLM 세션 상태 관리
+
+- [ ] `LLMTaskState` enum 정의 (`Domain/Entities/LLMTaskState.swift`)
+  - `idle`, `refining`, `translating`, `completed`, `failed(LLMError)`, `cancelled`, `stale`
+- [ ] `PromptBuilderViewModel`에 LLM 상태 추가
+  - `llmTaskState: LLMTaskState`, `refinedPrompt: String?`, `translatedPrompt: String?`
+  - `activeModelConfig: LLMModelConfig?`
+  - 모든 상태 변경은 `@MainActor` 격리 하에서 수행
+- [ ] Request fingerprint 계산 로직
+  - `SHA-256(canonical JSON)` 기반
+  - 입력: task kind + source text + model config + keyword IDs (정렬됨)
+  - 동일 fingerprint → 세션 내 캐시 재사용
+- [ ] Stale 전파 규칙 구현
+  - 선택값 변경 → refined/translated stale
+  - 모델 설정 변경 → refined/translated stale
+  - stale 시 기존 결과 유지 + "stale" 배지
+- [ ] Cancellation 규칙
+  - 세션당 1개 active request
+  - 새 요청 시 기존 요청 취소 (`Task.cancel()`)
+  - 패널 닫기 시 in-flight 요청 취소
+- [ ] `PromptPreviewMode` 확장: `.generated`, `.edited`, `.refined`, `.translated`
+
+완료 기준: LLM 결과가 stale/cancel 규칙에 따라 일관되게 관리됨
+
+## 23. AI 설정 UI
+
+- [ ] `AISettingsView` 구현 (`Presentation/Preferences/AISettingsView.swift`)
+  - Provider 선택: OpenRouter / Ollama (Picker)
+  - API Key 입력: SecureField + Keychain 저장 (OpenRouter만)
+  - Ollama endpoint 입력: TextField (기본값 `http://localhost:11434`)
+  - Model 선택: TextField
+  - Temperature 슬라이더 (0.0 ~ 1.0)
+  - Max Tokens 입력
+  - "Test Connection" 버튼 → 실제 API 호출 후 성공/실패 표시
+- [ ] `PreferencesView` 탭 구성: General / AI / Documents / Hotkey
+- [ ] 설정 저장: `@AppStorage` + Keychain 혼합
+  - Provider, modelID, temperature, maxTokens → `@AppStorage`
+  - API Key → Keychain
+- [ ] 설정 변경 시 `activeModelConfig` 업데이트 → derived output stale 처리
+
+완료 기준: 설정창에서 AI 구성 후 "Test Connection" 성공 시 응답 표시
+
+## 24. Refine / Translate 액션 UI
+
+- [ ] `ActionBarView`에 Refine / Translate 버튼 추가
+  - Refine: `(LLMModelConfig 유효)` 시 활성화, 로딩 스피너, stale 배지
+  - Translate: `(source text 존재) AND (LLMModelConfig 유효)` 시 활성화, 로딩 스피너
+  - 두 버튼 동시 활성화 불가 (직렬 실행)
+- [ ] `PromptPreviewView`에 Refine / Translated 모드 탭 추가
+  - `.generated` | `.edited` | `.refined` | `.translated` 4개 모드
+  - 배지: BASE, EDITED, REFINED, TRANSLATED, STALE
+  - Stale 결과는 warning 색상으로 표시
+- [ ] Inline error 표시
+  - 실패 시 preview 하단에 error caption (destructive modal 아님)
+  - retry는 해당 버튼 재활성화로 제공
+- [ ] ViewModel에 `refinePrompt()`, `translatePrompt()` async 메서드 추가
+  - `@MainActor` 격리 보장: ViewModel 전체가 이미 `@MainActor`
+  - `Task { }`로 비동기 실행, 네트워크 호출만 백그라운드
+  - 에러 핸들링 분기:
+    - `CancellationError` → `llmTaskState = .cancelled`
+    - `LLMError` → `llmTaskState = .failed(error)`, 기존 결과 유지
+    - 정상 → `llmTaskState = .completed`
+
+완료 기준: Refine → 로딩 → 결과 → Translate → 영어 번역 결과 표시
+
+## 25. Panel Close 자동 저장
+
+- [ ] `DependencyContainer.showPromptBuilder()`의 `onClose` 콜백 수정
+  - 패널 닫기 시 반드시 아래 순서로 실행:
+    1. in-flight LLM Task가 있으면 `cancel()` 즉시 발행
+    2. `viewModel.saveDraft()` 호출
+    3. `floatingPanelController.close()` 호출
+  - `@MainActor` 보장하에 순차 실행
+- [ ] 테스트: 패널 열기 → 상태 변경 → 패널 닫기 → 재실행 → 상태 복원
+
+완료 기준: 패널 닫은 후 앱 재실행 시 직전 상태 복원
+
+## 26. Phase 3 검증
+
+- [ ] 전체 빌드 성공
+- [ ] 기존 테스트 통과
+- [ ] 신규 단위 테스트
+  - [ ] Refine useCase 단위 테스트 (mock repository)
+  - [ ] Translate useCase 단위 테스트
+  - [ ] Stale 전파 테스트 (선택값 변경 → refined stale)
+  - [ ] Fingerprint 캐시 재사용 테스트
+  - [ ] Keychain roundtrip 테스트
+  - [ ] ViewModel refine/translate 상태 전이 테스트
+  - [ ] CancellationError 분기 테스트
+- [ ] 수동 검증
+  - [ ] API Key 없이 앱 정상 동작 (기본 기능)
+  - [ ] OpenRouter 설정 후 Refine 성공
+  - [ ] Ollama 설정 후 Refine 성공
+  - [ ] Refine → Translate 플로우
+  - [ ] 네트워크 오류 시 inline error 표시
+  - [ ] 설정 변경 후 stale 배지 표시
+
+완료 기준: LLM 없이도 기본 기능 동작, LLM 설정 시 refine/translate 플로우 완주
+
+---
+
+# Phase 3 이후로 미루는 것
+
+- [ ] 참고 문서 연결 (Phase 4)
+- [ ] locale 전환 UI
+- [ ] taxonomy 편집 UI
+- [ ] 다른 언어 번역 (영어 외)
+- [ ] 스트리밍 응답
+- [ ] 세션 간 LLM 결과 복원
+- [ ] 채팅 히스토리 기반 대화

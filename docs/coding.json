@@ -57,19 +57,19 @@
       "id": "context",
       "title": "작업 대상",
       "displayOrder": 1,
-      "maxVisibleKeywords": 4
+      "maxVisibleKeywords": 6
     },
     {
       "id": "priority",
       "title": "우선순위",
       "displayOrder": 2,
-      "maxVisibleKeywords": 3
+      "maxVisibleKeywords": 4
     },
     {
       "id": "constraint",
       "title": "제약조건",
       "displayOrder": 3,
-      "maxVisibleKeywords": 4
+      "maxVisibleKeywords": 6
     },
     {
       "id": "output",
@@ -81,7 +81,7 @@
       "id": "verification",
       "title": "검증 요구",
       "displayOrder": 5,
-      "maxVisibleKeywords": 3
+      "maxVisibleKeywords": 4
     }
   ],
   "subtopics": [
@@ -99,7 +99,9 @@
       "defaultKeywordIDs": [
         "api",
         "ui",
+        "architecture",
         "maintainability",
+        "scalability",
         "step-by-step-plan",
         "checklist",
         "impact-analysis"
@@ -129,8 +131,10 @@
       ],
       "defaultKeywordIDs": [
         "api",
+        "architecture",
         "maintainability",
         "preserve-style",
+        "no-breaking-api",
         "step-by-step-plan",
         "impact-analysis"
       ],
@@ -161,10 +165,13 @@
       "defaultKeywordIDs": [
         "swift",
         "api",
+        "error-handling",
         "stability",
+        "simplicity",
         "preserve-style",
         "explain-with-code",
-        "add-regression-test"
+        "add-regression-test",
+        "lint-clean"
       ],
       "enabledSectionIDs": [
         "situation",
@@ -194,9 +201,13 @@
         "swift",
         "readability",
         "maintainability",
+        "simplicity",
         "minimal-change",
+        "preserve-style",
+        "no-new-files",
         "preserve-behavior",
-        "diff-first"
+        "diff-first",
+        "lint-clean"
       ],
       "enabledSectionIDs": [
         "situation",
@@ -217,6 +228,7 @@
       "description": "버그를 분석하고 수정할 때",
       "keywordGroupIDs": [
         "context",
+        "priority",
         "constraint",
         "output",
         "verification"
@@ -224,15 +236,22 @@
       "defaultKeywordIDs": [
         "swift",
         "api",
+        "error-handling",
+        "stability",
+        "security-priority",
         "minimal-change",
+        "single-file",
         "preserve-style",
         "root-cause-first",
         "add-regression-test",
+        "edge-cases",
+        "lint-clean",
         "diff-first"
       ],
       "enabledSectionIDs": [
         "situation",
         "taskType",
+        "focus",
         "constraints",
         "expectedOutput",
         "verification",
@@ -259,6 +278,8 @@
         "preserve-style",
         "checklist",
         "edge-cases",
+        "lint-clean",
+        "type-check-pass",
         "include-manual-checks"
       ],
       "enabledSectionIDs": [
@@ -288,10 +309,12 @@
       "defaultKeywordIDs": [
         "api",
         "ui",
+        "state-management",
         "stability",
         "backward-compatible",
         "explain-with-code",
-        "impact-analysis"
+        "impact-analysis",
+        "add-regression-test"
       ],
       "enabledSectionIDs": [
         "situation",
@@ -320,9 +343,11 @@
       "defaultKeywordIDs": [
         "api",
         "ui",
+        "documentation",
         "minimal-change",
         "backward-compatible",
         "impact-analysis",
+        "preserve-behavior",
         "checklist"
       ],
       "enabledSectionIDs": [
@@ -439,6 +464,125 @@
       ]
     },
     {
+      "id": "database",
+      "groupID": "context",
+      "type": "context",
+      "title": "DB/데이터 모델",
+      "promptFragment": "The work affects database schema, queries, or data models.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition",
+        "feature-removal",
+        "testing"
+      ]
+    },
+    {
+      "id": "security",
+      "groupID": "context",
+      "type": "context",
+      "title": "보안/인증",
+      "promptFragment": "The work involves authentication, authorization, or security-sensitive logic.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "refactor"
+      ]
+    },
+    {
+      "id": "architecture",
+      "groupID": "context",
+      "type": "context",
+      "title": "아키텍처/설계",
+      "promptFragment": "The work affects overall architecture, module boundaries, or system design.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "refactor",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "documentation",
+      "groupID": "context",
+      "type": "context",
+      "title": "문서/주석",
+      "promptFragment": "The work involves documentation, comments, or API reference updates.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "state-management",
+      "groupID": "context",
+      "type": "context",
+      "title": "상태 관리",
+      "promptFragment": "The work affects application state management, data flow, or reactive updates.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition",
+        "testing"
+      ]
+    },
+    {
+      "id": "error-handling",
+      "groupID": "context",
+      "type": "context",
+      "title": "에러 처리",
+      "promptFragment": "The work involves error handling, validation, or failure recovery logic.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "refactor",
+        "feature-addition",
+        "testing"
+      ]
+    },
+    {
+      "id": "logging",
+      "groupID": "context",
+      "type": "context",
+      "title": "로깅/모니터링",
+      "promptFragment": "The work affects logging, tracing, or observability infrastructure.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "config",
+      "groupID": "context",
+      "type": "context",
+      "title": "설정/환경",
+      "promptFragment": "The work affects configuration, environment setup, or build settings.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
       "id": "readability",
       "groupID": "priority",
       "type": "priority",
@@ -461,7 +605,8 @@
       "supportedSubtopicIDs": [
         "implementation",
         "testing",
-        "feature-addition"
+        "feature-addition",
+        "bugfix"
       ]
     },
     {
@@ -487,7 +632,8 @@
       "supportedSubtopicIDs": [
         "initial-planning",
         "planning-revision",
-        "refactor"
+        "refactor",
+        "feature-removal"
       ]
     },
     {
@@ -500,6 +646,60 @@
       "supportedSubtopicIDs": [
         "implementation",
         "feature-addition"
+      ]
+    },
+    {
+      "id": "simplicity",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "단순성",
+      "promptFragment": "Prioritize simplicity and minimal abstraction.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "scalability",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "확장성",
+      "promptFragment": "Prioritize scalability and future growth capacity.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "planning-revision",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "security-priority",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "보안",
+      "promptFragment": "Prioritize security hardening and attack surface reduction.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "refactor"
+      ]
+    },
+    {
+      "id": "accessibility",
+      "groupID": "priority",
+      "type": "priority",
+      "title": "접근성",
+      "promptFragment": "Prioritize accessibility compliance and inclusive design.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "ui"
       ]
     },
     {
@@ -571,6 +771,112 @@
       ]
     },
     {
+      "id": "single-file",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "단일 파일 제한",
+      "promptFragment": "Restrict changes to a single file.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "implementation",
+        "refactor"
+      ]
+    },
+    {
+      "id": "no-database-changes",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "DB 변경 금지",
+      "promptFragment": "Do not alter database schema or migrations.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "no-ui-changes",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "UI 변경 금지",
+      "promptFragment": "Do not alter the user interface or visual layout.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "no-new-files",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "새 파일 생성 금지",
+      "promptFragment": "Do not create new files; modify existing ones only.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "bugfix",
+        "refactor",
+        "implementation"
+      ]
+    },
+    {
+      "id": "offline-first",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "오프라인 우선",
+      "promptFragment": "The solution must work without network connectivity.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "bugfix"
+      ]
+    },
+    {
+      "id": "memory-budget",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "메모리 제한",
+      "promptFragment": "Stay within specified memory or resource limits.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "platform-specific",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "플랫폼 제한",
+      "promptFragment": "Target a specific platform or OS version only.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "bugfix"
+      ]
+    },
+    {
+      "id": "timeout-constraint",
+      "groupID": "constraint",
+      "type": "constraint",
+      "title": "시간 제한",
+      "promptFragment": "The operation must complete within a strict time budget.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "refactor"
+      ]
+    },
+    {
       "id": "code-only",
       "groupID": "output",
       "type": "output",
@@ -631,6 +937,33 @@
         "initial-planning",
         "testing",
         "feature-removal"
+      ]
+    },
+    {
+      "id": "before-after",
+      "groupID": "output",
+      "type": "output",
+      "title": "변경 전후 비교",
+      "promptFragment": "Show a clear before/after comparison.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "refactor",
+        "bugfix",
+        "feature-removal",
+        "planning-revision"
+      ]
+    },
+    {
+      "id": "migration-guide",
+      "groupID": "output",
+      "type": "output",
+      "title": "마이그레이션 가이드",
+      "promptFragment": "Include a migration or transition guide for the change.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "refactor",
+        "feature-removal",
+        "planning-revision"
       ]
     },
     {
@@ -708,6 +1041,36 @@
         "feature-addition",
         "feature-removal"
       ]
+    },
+    {
+      "id": "lint-clean",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "린트/정적분석 통과",
+      "promptFragment": "Ensure the result passes linting and static analysis without warnings.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition",
+        "testing"
+      ]
+    },
+    {
+      "id": "type-check-pass",
+      "groupID": "verification",
+      "type": "verification",
+      "title": "타입 체크 통과",
+      "promptFragment": "Verify that type checking passes with zero errors.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition",
+        "testing"
+      ]
     }
   ],
   "visibilityRules": [
@@ -716,14 +1079,21 @@
       "visibleGroupIDs": [
         "context",
         "priority",
-        "output"
+        "output",
+        "verification"
       ],
       "visibleKeywordIDs": [
         "api",
         "ui",
+        "database",
+        "security",
+        "architecture",
+        "state-management",
         "maintainability",
+        "scalability",
         "step-by-step-plan",
         "checklist",
+        "before-after",
         "impact-analysis"
       ]
     },
@@ -731,14 +1101,23 @@
       "subtopicID": "planning-revision",
       "visibleGroupIDs": [
         "context",
+        "priority",
         "constraint",
-        "output"
+        "output",
+        "verification"
       ],
       "visibleKeywordIDs": [
         "api",
+        "architecture",
+        "security",
         "maintainability",
+        "scalability",
         "preserve-style",
+        "no-breaking-api",
+        "backward-compatible",
         "step-by-step-plan",
+        "before-after",
+        "migration-guide",
         "impact-analysis"
       ]
     },
@@ -746,103 +1125,215 @@
       "subtopicID": "implementation",
       "visibleGroupIDs": [
         "context",
+        "priority",
         "constraint",
-        "output"
+        "output",
+        "verification"
       ],
       "visibleKeywordIDs": [
         "swift",
+        "typescript",
+        "react",
         "api",
         "ui",
+        "database",
+        "security",
+        "state-management",
+        "error-handling",
+        "logging",
+        "config",
+        "stability",
+        "simplicity",
+        "delivery-speed",
+        "security-priority",
+        "accessibility",
         "preserve-style",
         "no-new-dependencies",
+        "backward-compatible",
+        "single-file",
+        "offline-first",
+        "platform-specific",
+        "code-only",
         "explain-with-code",
         "add-regression-test",
-        "stability"
+        "lint-clean",
+        "type-check-pass"
       ]
     },
     {
       "subtopicID": "refactor",
       "visibleGroupIDs": [
+        "context",
         "priority",
         "constraint",
+        "output",
         "verification"
       ],
       "visibleKeywordIDs": [
+        "swift",
+        "typescript",
+        "test-suite",
+        "architecture",
+        "state-management",
+        "database",
+        "documentation",
         "readability",
         "maintainability",
+        "performance",
+        "simplicity",
         "minimal-change",
         "preserve-style",
+        "no-new-files",
+        "no-new-dependencies",
+        "no-database-changes",
+        "memory-budget",
+        "diff-first",
+        "before-after",
+        "migration-guide",
         "preserve-behavior",
-        "diff-first"
+        "lint-clean",
+        "type-check-pass"
       ]
     },
     {
       "subtopicID": "bugfix",
       "visibleGroupIDs": [
         "context",
+        "priority",
         "constraint",
+        "output",
         "verification"
       ],
       "visibleKeywordIDs": [
         "swift",
+        "typescript",
         "api",
         "ui",
+        "database",
+        "error-handling",
+        "logging",
+        "security",
+        "stability",
+        "security-priority",
+        "performance",
         "minimal-change",
         "preserve-style",
+        "single-file",
+        "no-new-files",
+        "no-database-changes",
+        "no-ui-changes",
+        "timeout-constraint",
+        "diff-first",
+        "before-after",
         "root-cause-first",
         "add-regression-test",
         "edge-cases",
-        "diff-first"
+        "lint-clean",
+        "type-check-pass"
       ]
     },
     {
       "subtopicID": "testing",
       "visibleGroupIDs": [
         "context",
+        "priority",
+        "constraint",
         "output",
         "verification"
       ],
       "visibleKeywordIDs": [
         "test-suite",
+        "api",
+        "ui",
+        "database",
+        "state-management",
+        "error-handling",
+        "stability",
+        "preserve-style",
+        "no-new-dependencies",
+        "code-only",
+        "explain-with-code",
         "checklist",
         "edge-cases",
         "include-manual-checks",
-        "stability"
+        "lint-clean",
+        "type-check-pass"
       ]
     },
     {
       "subtopicID": "feature-addition",
       "visibleGroupIDs": [
         "context",
+        "priority",
         "constraint",
+        "output",
         "verification"
       ],
       "visibleKeywordIDs": [
         "api",
         "ui",
+        "database",
+        "security",
+        "state-management",
+        "error-handling",
+        "architecture",
+        "logging",
+        "config",
+        "documentation",
+        "stability",
+        "simplicity",
+        "scalability",
+        "security-priority",
+        "accessibility",
+        "delivery-speed",
         "backward-compatible",
         "no-new-dependencies",
+        "no-database-changes",
+        "no-ui-changes",
+        "offline-first",
+        "memory-budget",
+        "platform-specific",
+        "code-only",
+        "explain-with-code",
+        "migration-guide",
         "impact-analysis",
         "add-regression-test",
-        "explain-with-code",
-        "stability"
+        "edge-cases",
+        "lint-clean",
+        "type-check-pass"
       ]
     },
     {
       "subtopicID": "feature-removal",
       "visibleGroupIDs": [
         "context",
+        "priority",
         "constraint",
+        "output",
         "verification"
       ],
       "visibleKeywordIDs": [
         "api",
         "ui",
+        "database",
+        "config",
+        "documentation",
+        "maintainability",
+        "simplicity",
         "minimal-change",
         "backward-compatible",
+        "no-breaking-api",
+        "no-database-changes",
+        "no-ui-changes",
+        "explain-with-code",
+        "checklist",
+        "before-after",
+        "migration-guide",
+        "diff-first",
         "impact-analysis",
         "preserve-behavior",
-        "checklist"
+        "include-manual-checks",
+        "lint-clean"
       ]
     }
   ],
