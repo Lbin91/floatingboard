@@ -19,4 +19,18 @@ struct FloatingPanelControllerTests {
 
         #expect(visiblePanel?.isVisible == false)
     }
+
+    @Test
+    func floatingPanelDoesNotHideWhenAppDeactivates() {
+        let controller = FloatingPanelController()
+
+        controller.show(rootView: Text("Smoke Test"))
+
+        let visiblePanel = NSApp.windows.first(where: { $0 is FloatingPanel }) as? FloatingPanel
+        #expect(visiblePanel?.hidesOnDeactivate == false)
+        #expect(visiblePanel?.collectionBehavior.contains(.canJoinAllSpaces) == true)
+        #expect(visiblePanel?.collectionBehavior.contains(.fullScreenAuxiliary) == true)
+
+        controller.close()
+    }
 }

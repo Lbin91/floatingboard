@@ -177,11 +177,18 @@ struct PromptBuilderViewModelTests {
     private func makeViewModel(draftRepository: PromptDraftRepository? = nil) -> PromptBuilderViewModel {
         let repository = LocalTaxonomyRepository(resourceURL: taxonomyURL())
         let repo = draftRepository ?? LocalPromptDraftRepository(defaults: isolatedDefaults())
+        let keychainRepo = KeychainRepositoryImpl()
+        let openRouter = OpenRouterRepository()
+        let ollama = OllamaRepository()
+        let provider = AIRepositoryProvider(openRouter: openRouter, ollama: ollama)
         return PromptBuilderViewModel(
             taxonomyRepository: repository,
             buildPromptUseCase: BuildPromptUseCase(),
             clipboardManager: ClipboardManager(),
-            draftRepository: repo
+            draftRepository: repo,
+            keychainRepository: keychainRepo,
+            refinePromptUseCase: RefinePromptUseCase(provider: provider),
+            translatePromptUseCase: TranslatePromptUseCase(provider: provider)
         )
     }
 
