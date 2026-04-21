@@ -2,8 +2,10 @@ import SwiftUI
 
 struct ActionBarView: View {
     let canCopy: Bool
+    let canRegenerate: Bool
     let copyFeedbackMessage: String?
     let onCopy: () -> Void
+    let onRegenerate: () -> Void
 
     var body: some View {
         HStack {
@@ -14,6 +16,12 @@ struct ActionBarView: View {
             }
 
             Spacer()
+
+            Button("Regenerate") {
+                onRegenerate()
+            }
+            .buttonStyle(.bordered)
+            .disabled(!canRegenerate)
 
             Button("Copy") {
                 onCopy()

@@ -55,8 +55,10 @@ struct PromptBuilderView: View {
 
             ActionBarView(
                 canCopy: !viewModel.previewText.isEmpty,
+                canRegenerate: viewModel.generatedPrompt.hasEditableDraft,
                 copyFeedbackMessage: viewModel.copyFeedbackMessage,
-                onCopy: viewModel.copyPreview
+                onCopy: viewModel.copyPreview,
+                onRegenerate: viewModel.regenerateFromSelections
             )
         }
         .padding(24)

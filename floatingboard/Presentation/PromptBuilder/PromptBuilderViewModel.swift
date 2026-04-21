@@ -7,6 +7,7 @@ final class PromptBuilderViewModel {
     private let taxonomyRepository: TaxonomyRepository
     private let buildPromptUseCase: BuildPromptUseCase
     private let clipboardManager: ClipboardManager
+    private let draftRepository: PromptDraftRepository
 
     private(set) var taxonomy: PromptTaxonomy?
     private(set) var topics: [Topic] = []
@@ -54,12 +55,15 @@ final class PromptBuilderViewModel {
     init(
         taxonomyRepository: TaxonomyRepository,
         buildPromptUseCase: BuildPromptUseCase,
-        clipboardManager: ClipboardManager
+        clipboardManager: ClipboardManager,
+        draftRepository: PromptDraftRepository
     ) {
         self.taxonomyRepository = taxonomyRepository
         self.buildPromptUseCase = buildPromptUseCase
         self.clipboardManager = clipboardManager
+        self.draftRepository = draftRepository
         loadTaxonomy()
+        restoreDraft()
     }
 
     var visibleKeywordGroups: [KeywordGroup] {
@@ -130,6 +134,44 @@ final class PromptBuilderViewModel {
         }
 
         previewMode = .edited
+    }
+
+    func regenerateFromSelections() {
+        generatedPrompt.editedText = generatedPrompt.baseText
+        generatedPrompt.hasEditableDraft = false
+        generatedPrompt.isEditedDirty = false
+        generatedPrompt.isEditedOutdated = false
+        previewMode = .generated
+    }
+
+    func saveDraft() {
+        let draft = PromptDraft(
+            topicID: selectedTopicID,
+            subtopicID: selectedSubtopicID,
+            selectedKeywordIDs: selectedKeywordIDs,
+            userInput: userDraftText
+        )
+        try? draftRepository.saveDraft(draft, editedPrompt: generatedPrompt.hasEditableDraft ? generatedPrompt : nil)
+    }
+
+    func restoreDraft() {
+        guard let restored = try? draftRepository.loadDraft() else { return }
+
+        let draft = restored.draft
+
+        selectedTopicID = draft.topicID
+
+        if let subtopicID = draft.subtopicID {
+            selectedSubtopicID = subtopicID
+        }
+
+        selectedKeywordIDs = draft.selectedKeywordIDs
+        userDraftText = draft.userInput
+
+        if let editedPrompt = restored.editedPrompt {
+            generatedPrompt = editedPrompt
+            previewMode = .edited
+        }
     }
 
     private func loadTaxonomy() {

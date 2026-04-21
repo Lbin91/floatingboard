@@ -99,13 +99,96 @@ struct PromptBuilderViewModelTests {
         #expect(viewModel.copyFeedbackMessage == "Copied to clipboard")
     }
 
-    private func makeViewModel() -> PromptBuilderViewModel {
+    @Test
+    func saveAndRestoreDraftPreservesSelections() throws {
+        let suiteName = "test-save-restore-\(UUID().uuidString)"
+        let suite = UserDefaults(suiteName: suiteName)!
+        suite.removePersistentDomain(forName: suiteName)
+        defer { suite.removePersistentDomain(forName: suiteName) }
+
+        let draftRepo = LocalPromptDraftRepository(defaults: suite)
+
+        let viewModel1 = makeViewModel(draftRepository: draftRepo)
+        viewModel1.selectSubtopic("refactor")
+        viewModel1.toggleKeyword("performance")
+        viewModel1.userDraftText = "My saved draft"
+        viewModel1.saveDraft()
+
+        let viewModel2 = makeViewModel(draftRepository: draftRepo)
+
+        #expect(viewModel2.selectedSubtopicID == "refactor")
+        #expect(viewModel2.isSelected("performance"))
+        #expect(viewModel2.userDraftText == "My saved draft")
+    }
+
+    @Test
+    func saveAndRestoreEditedPrompt() throws {
+        let suite = UserDefaults(suiteName: "test-save-edited")!
+        suite.removePersistentDomain(forName: "test-save-edited")
+        defer { suite.removePersistentDomain(forName: "test-save-edited") }
+
+        let draftRepo = LocalPromptDraftRepository(defaults: suite)
+
+        let viewModel1 = makeViewModel(draftRepository: draftRepo)
+        viewModel1.switchToEditMode()
+        viewModel1.editedPromptText = "Custom edited prompt"
+        viewModel1.saveDraft()
+
+        let viewModel2 = makeViewModel(draftRepository: draftRepo)
+
+        #expect(viewModel2.previewMode == .edited)
+        #expect(viewModel2.generatedPrompt.hasEditableDraft)
+        #expect(viewModel2.editedPromptText == "Custom edited prompt")
+    }
+
+    @Test
+    func restoreWithNoSavedDraftUsesDefaults() throws {
+        let suite = UserDefaults(suiteName: "test-empty-restore")!
+        suite.removePersistentDomain(forName: "test-empty-restore")
+        defer { suite.removePersistentDomain(forName: "test-empty-restore") }
+
+        let draftRepo = LocalPromptDraftRepository(defaults: suite)
+
+        let viewModel = makeViewModel(draftRepository: draftRepo)
+
+        #expect(viewModel.selectedTopicID == .coding)
+        #expect(viewModel.selectedSubtopicID == "implementation")
+        #expect(viewModel.previewMode == .generated)
+    }
+
+    @Test
+    func clearDraftRemovesSavedState() throws {
+        let suite = UserDefaults(suiteName: "test-clear")!
+        suite.removePersistentDomain(forName: "test-clear")
+        defer { suite.removePersistentDomain(forName: "test-clear") }
+
+        let draftRepo = LocalPromptDraftRepository(defaults: suite)
+
+        let viewModel = makeViewModel(draftRepository: draftRepo)
+        viewModel.userDraftText = "Will be cleared"
+        viewModel.saveDraft()
+
+        try draftRepo.clearDraft()
+
+        let restored = try draftRepo.loadDraft()
+        #expect(restored == nil)
+    }
+
+    private func makeViewModel(draftRepository: PromptDraftRepository? = nil) -> PromptBuilderViewModel {
         let repository = LocalTaxonomyRepository(resourceURL: taxonomyURL())
+        let repo = draftRepository ?? LocalPromptDraftRepository(defaults: isolatedDefaults())
         return PromptBuilderViewModel(
             taxonomyRepository: repository,
             buildPromptUseCase: BuildPromptUseCase(),
-            clipboardManager: ClipboardManager()
+            clipboardManager: ClipboardManager(),
+            draftRepository: repo
         )
+    }
+
+    private func isolatedDefaults(name: String = "test-isolated-\(UUID().uuidString)") -> UserDefaults {
+        let suite = UserDefaults(suiteName: name)!
+        suite.removePersistentDomain(forName: name)
+        return suite
     }
 
     private func taxonomyURL() -> URL {

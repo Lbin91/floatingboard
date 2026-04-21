@@ -5,7 +5,7 @@ enum PromptPreviewMode: String, CaseIterable {
     case edited
 }
 
-struct GeneratedPrompt: Equatable {
+struct GeneratedPrompt: Equatable, Codable {
     var baseText: String = ""
     var editedText: String = ""
     var hasEditableDraft: Bool = false

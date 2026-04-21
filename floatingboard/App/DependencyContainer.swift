@@ -7,6 +7,7 @@ final class DependencyContainer {
     let floatingPanelController: FloatingPanelController
     let taxonomyRepository: TaxonomyRepository
     let buildPromptUseCase: BuildPromptUseCase
+    let draftRepository: PromptDraftRepository
     let promptBuilderViewModel: PromptBuilderViewModel
 
     init() {
@@ -14,10 +15,12 @@ final class DependencyContainer {
         self.globalHotkeyManager = GlobalHotkeyManager()
         self.taxonomyRepository = LocalTaxonomyRepository()
         self.buildPromptUseCase = BuildPromptUseCase()
+        self.draftRepository = LocalPromptDraftRepository()
         self.promptBuilderViewModel = PromptBuilderViewModel(
             taxonomyRepository: taxonomyRepository,
             buildPromptUseCase: buildPromptUseCase,
-            clipboardManager: clipboardManager
+            clipboardManager: clipboardManager,
+            draftRepository: draftRepository
         )
         self.floatingPanelController = FloatingPanelController()
     }
