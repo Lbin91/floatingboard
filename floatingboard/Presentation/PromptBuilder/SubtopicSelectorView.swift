@@ -5,22 +5,19 @@ struct SubtopicSelectorView: View {
     let selectedSubtopicID: String?
     let onSelect: (String) -> Void
 
-    private let columns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Subtopic")
-                .font(.headline)
-
-            LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
+        ScrollView(.horizontal) {
+            HStack(spacing: 6) {
                 ForEach(subtopics, id: \.id) { subtopic in
-                    Button(subtopic.title) {
+                    Button {
                         onSelect(subtopic.id)
+                    } label: {
+                        Text(subtopic.title)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(subtopic.id == selectedSubtopicID ? .accentColor : .secondary)
+                    .buttonStyle(CompactChipButtonStyle(isSelected: subtopic.id == selectedSubtopicID))
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 }

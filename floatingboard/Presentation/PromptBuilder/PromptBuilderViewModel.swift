@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import Observation
 
@@ -8,6 +9,9 @@ final class PromptBuilderViewModel {
     private let buildPromptUseCase: BuildPromptUseCase
     private let clipboardManager: ClipboardManager
     private let draftRepository: PromptDraftRepository
+    private let keychainRepository: KeychainRepository
+    private let refinePromptUseCase: RefinePromptUseCase
+    private let translatePromptUseCase: TranslatePromptUseCase
 
     private(set) var taxonomy: PromptTaxonomy?
     private(set) var topics: [Topic] = []
@@ -16,6 +20,16 @@ final class PromptBuilderViewModel {
     private(set) var copyFeedbackMessage: String?
     private(set) var generatedPrompt = GeneratedPrompt()
     private(set) var previewMode: PromptPreviewMode = .generated
+
+    // MARK: - LLM State (Phase 3)
+
+    private(set) var llmTaskState: LLMTaskState = .idle
+    private(set) var refinedPrompt: String?
+    private(set) var translatedPrompt: String?
+    var activeModelConfig: LLMModelConfig?
+    private var activeLLMTask: Task<Void, Never>?
+    private var lastRefineFingerprint: String?
+    private var lastTranslateFingerprint: String?
 
     var selectedTopicID: TopicID = .coding {
         didSet { refreshSubtopics() }
@@ -49,6 +63,10 @@ final class PromptBuilderViewModel {
             return generatedPrompt.displayedGeneratedText
         case .edited:
             return generatedPrompt.displayedEditedText
+        case .refined:
+            return refinedPrompt ?? generatedPrompt.displayedGeneratedText
+        case .translated:
+            return translatedPrompt ?? generatedPrompt.displayedGeneratedText
         }
     }
 
@@ -56,15 +74,23 @@ final class PromptBuilderViewModel {
         taxonomyRepository: TaxonomyRepository,
         buildPromptUseCase: BuildPromptUseCase,
         clipboardManager: ClipboardManager,
-        draftRepository: PromptDraftRepository
+        draftRepository: PromptDraftRepository,
+        keychainRepository: KeychainRepository,
+        refinePromptUseCase: RefinePromptUseCase,
+        translatePromptUseCase: TranslatePromptUseCase
     ) {
         self.taxonomyRepository = taxonomyRepository
         self.buildPromptUseCase = buildPromptUseCase
         self.clipboardManager = clipboardManager
         self.draftRepository = draftRepository
+        self.keychainRepository = keychainRepository
+        self.refinePromptUseCase = refinePromptUseCase
+        self.translatePromptUseCase = translatePromptUseCase
         loadTaxonomy()
         restoreDraft()
     }
+
+    // MARK: - Taxonomy & Selection
 
     var visibleKeywordGroups: [KeywordGroup] {
         guard let taxonomy, let selectedSubtopicID else { return [] }
@@ -108,6 +134,8 @@ final class PromptBuilderViewModel {
         }
     }
 
+    // MARK: - Preview Modes
+
     func copyPreview() {
         guard !previewText.isEmpty else { return }
         clipboardManager.copy(previewText)
@@ -136,6 +164,16 @@ final class PromptBuilderViewModel {
         previewMode = .edited
     }
 
+    func switchToRefinedMode() {
+        if refinedPrompt == nil { return }
+        previewMode = .refined
+    }
+
+    func switchToTranslatedMode() {
+        if translatedPrompt == nil { return }
+        previewMode = .translated
+    }
+
     func regenerateFromSelections() {
         generatedPrompt.editedText = generatedPrompt.baseText
         generatedPrompt.hasEditableDraft = false
@@ -143,6 +181,137 @@ final class PromptBuilderViewModel {
         generatedPrompt.isEditedOutdated = false
         previewMode = .generated
     }
+
+    // MARK: - LLM Operations (Phase 3)
+
+    func refinePrompt() {
+        guard let config = activeModelConfig else { return }
+        let sourceText = generatedPrompt.hasEditableDraft
+            ? generatedPrompt.editedText
+            : generatedPrompt.baseText
+        guard !sourceText.isEmpty else { return }
+
+        // Check fingerprint cache
+        let fingerprint = computeFingerprint(taskKind: "refine", sourceText: sourceText)
+        if let fingerprint, fingerprint == lastRefineFingerprint, refinedPrompt != nil {
+            llmTaskState = .completed
+            return
+        }
+
+        // Cancel any in-flight request
+        activeLLMTask?.cancel()
+
+        llmTaskState = .refining
+
+        activeLLMTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                // Load API key from keychain for providers that require it
+                var apiKey: String?
+                if config.provider.requiresAPIKey {
+                    if let data = try? self.keychainRepository.load(key: config.provider.keychainAccount) {
+                        apiKey = String(data: data, encoding: .utf8)
+                    }
+                    guard apiKey != nil else {
+                        self.llmTaskState = .failed(.apiKeyMissing)
+                        return
+                    }
+                }
+
+                let result = try await self.refinePromptUseCase.execute(
+                    prompt: sourceText,
+                    config: config,
+                    apiKey: apiKey
+                )
+
+                guard !Task.isCancelled else {
+                    self.llmTaskState = .cancelled
+                    return
+                }
+
+                self.refinedPrompt = result
+                self.lastRefineFingerprint = fingerprint
+                self.llmTaskState = .completed
+            } catch is CancellationError {
+                self.llmTaskState = .cancelled
+            } catch let error as LLMError {
+                self.llmTaskState = .failed(error)
+            } catch {
+                self.llmTaskState = .failed(.providerUnavailable)
+            }
+        }
+    }
+
+    func translatePrompt() {
+        guard let config = activeModelConfig else { return }
+
+        // Priority: edited text > refined prompt > base prompt
+        var sourceText = ""
+        if generatedPrompt.hasEditableDraft && !generatedPrompt.editedText.isEmpty {
+            sourceText = generatedPrompt.editedText
+        } else if let refined = refinedPrompt, !refined.isEmpty {
+            sourceText = refined
+        } else {
+            sourceText = generatedPrompt.baseText
+        }
+        guard !sourceText.isEmpty else { return }
+
+        // Check fingerprint cache
+        let fingerprint = computeFingerprint(taskKind: "translate", sourceText: sourceText)
+        if let fingerprint, fingerprint == lastTranslateFingerprint, translatedPrompt != nil {
+            llmTaskState = .completed
+            return
+        }
+
+        // Cancel any in-flight request
+        activeLLMTask?.cancel()
+
+        llmTaskState = .translating
+
+        activeLLMTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                var apiKey: String?
+                if config.provider.requiresAPIKey {
+                    if let data = try? self.keychainRepository.load(key: config.provider.keychainAccount) {
+                        apiKey = String(data: data, encoding: .utf8)
+                    }
+                    guard apiKey != nil else {
+                        self.llmTaskState = .failed(.apiKeyMissing)
+                        return
+                    }
+                }
+
+                let result = try await self.translatePromptUseCase.execute(
+                    text: sourceText,
+                    config: config,
+                    apiKey: apiKey
+                )
+
+                guard !Task.isCancelled else {
+                    self.llmTaskState = .cancelled
+                    return
+                }
+
+                self.translatedPrompt = result
+                self.lastTranslateFingerprint = fingerprint
+                self.llmTaskState = .completed
+            } catch is CancellationError {
+                self.llmTaskState = .cancelled
+            } catch let error as LLMError {
+                self.llmTaskState = .failed(error)
+            } catch {
+                self.llmTaskState = .failed(.providerUnavailable)
+            }
+        }
+    }
+
+    func cancelActiveLLMTask() {
+        activeLLMTask?.cancel()
+        activeLLMTask = nil
+    }
+
+    // MARK: - Draft Persistence
 
     func saveDraft() {
         let draft = PromptDraft(
@@ -172,6 +341,26 @@ final class PromptBuilderViewModel {
             generatedPrompt = editedPrompt
             previewMode = .edited
         }
+    }
+
+    // MARK: - Private Helpers
+
+    private func computeFingerprint(taskKind: String, sourceText: String) -> String? {
+        guard let config = activeModelConfig else { return nil }
+        let keywordIDs = selectedKeywordIDs.sorted()
+        let payload: [String: Any] = [
+            "taskKind": taskKind,
+            "sourceText": sourceText,
+            "provider": config.provider.rawValue,
+            "modelID": config.modelID,
+            "temperature": config.temperature,
+            "maxTokens": config.maxTokens,
+            "keywordIDs": keywordIDs,
+            "subtopicID": selectedSubtopicID ?? ""
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: payload, options: .sortedKeys) else { return nil }
+        let hash = SHA256.hash(data: data)
+        return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 
     private func loadTaxonomy() {
@@ -251,6 +440,11 @@ final class PromptBuilderViewModel {
             generatedPrompt.editedText = generatedPrompt.baseText
             generatedPrompt.isEditedDirty = false
             generatedPrompt.isEditedOutdated = false
+        }
+
+        // Stale propagation: mark LLM results as stale when selections change
+        if refinedPrompt != nil || translatedPrompt != nil {
+            llmTaskState = .stale
         }
     }
 }
