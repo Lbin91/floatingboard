@@ -3,6 +3,8 @@ import Foundation
 enum PromptPreviewMode: String, CaseIterable {
     case generated
     case edited
+    case refined
+    case translated
 }
 
 struct GeneratedPrompt: Equatable, Codable {
