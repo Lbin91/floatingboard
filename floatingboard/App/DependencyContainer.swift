@@ -8,6 +8,13 @@ final class DependencyContainer {
     let taxonomyRepository: TaxonomyRepository
     let buildPromptUseCase: BuildPromptUseCase
     let draftRepository: PromptDraftRepository
+
+    // Phase 3 — LLM dependencies
+    let keychainRepository: KeychainRepository
+    let aiRepositoryProvider: AIRepositoryProvider
+    let refinePromptUseCase: RefinePromptUseCase
+    let translatePromptUseCase: TranslatePromptUseCase
+
     let promptBuilderViewModel: PromptBuilderViewModel
 
     init() {
@@ -16,11 +23,25 @@ final class DependencyContainer {
         self.taxonomyRepository = LocalTaxonomyRepository()
         self.buildPromptUseCase = BuildPromptUseCase()
         self.draftRepository = LocalPromptDraftRepository()
+
+        // Phase 3 — LLM dependencies
+        self.keychainRepository = KeychainRepositoryImpl()
+
+        let openRouter = OpenRouterRepository()
+        let ollama = OllamaRepository()
+        self.aiRepositoryProvider = AIRepositoryProvider(openRouter: openRouter, ollama: ollama)
+
+        self.refinePromptUseCase = RefinePromptUseCase(provider: aiRepositoryProvider)
+        self.translatePromptUseCase = TranslatePromptUseCase(provider: aiRepositoryProvider)
+
         self.promptBuilderViewModel = PromptBuilderViewModel(
             taxonomyRepository: taxonomyRepository,
             buildPromptUseCase: buildPromptUseCase,
             clipboardManager: clipboardManager,
-            draftRepository: draftRepository
+            draftRepository: draftRepository,
+            keychainRepository: keychainRepository,
+            refinePromptUseCase: refinePromptUseCase,
+            translatePromptUseCase: translatePromptUseCase
         )
         self.floatingPanelController = FloatingPanelController()
     }
@@ -30,7 +51,10 @@ final class DependencyContainer {
             rootView: PromptBuilderView(
                 viewModel: promptBuilderViewModel,
                 onClose: { [weak self] in
-                    self?.floatingPanelController.close()
+                    guard let self else { return }
+                    self.promptBuilderViewModel.cancelActiveLLMTask()
+                    self.promptBuilderViewModel.saveDraft()
+                    self.floatingPanelController.close()
                 }
             )
         )

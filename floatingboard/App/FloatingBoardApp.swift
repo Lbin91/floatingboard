@@ -18,7 +18,7 @@ struct FloatingBoardApp: App {
         }
 
         Settings {
-            PreferencesView()
+            PreferencesView(keychainRepository: container.keychainRepository)
         }
     }
 }

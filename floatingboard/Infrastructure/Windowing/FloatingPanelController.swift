@@ -11,7 +11,9 @@ final class FloatingPanelController {
         }
 
         panel?.contentView = NSHostingView(rootView: rootView)
-        panel?.center()
+        if panel?.isVisible != true {
+            panel?.center()
+        }
         panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -30,7 +32,7 @@ final class FloatingPanelController {
 
     private func makePanel() -> FloatingPanel {
         let panel = FloatingPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 420),
+            contentRect: NSRect(x: 0, y: 0, width: 640, height: 680),
             styleMask: [.titled, .fullSizeContentView, .closable],
             backing: .buffered,
             defer: false
@@ -38,9 +40,12 @@ final class FloatingPanelController {
 
         panel.isFloatingPanel = true
         panel.level = .floating
+        panel.hidesOnDeactivate = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isReleasedWhenClosed = false
+        panel.minSize = NSSize(width: 560, height: 560)
         panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
 
