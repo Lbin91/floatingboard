@@ -1,5 +1,10 @@
 .omx/
+.claude/settings.local.json
+.claude/rules/
+.claude/projects/
 .DS_Store
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+.omc
+TODO.md
