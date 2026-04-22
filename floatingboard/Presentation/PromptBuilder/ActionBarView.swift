@@ -22,8 +22,6 @@ struct ActionBarView: View {
                         .foregroundStyle(.green)
                 }
 
-                Spacer()
-
                 HStack(spacing: 4) {
                     if llmTaskState == .refining {
                         ProgressView()
@@ -39,7 +37,7 @@ struct ActionBarView: View {
                 }
 
                 if llmTaskState == .stale {
-                    Text("STALE")
+                    Text("Outdated")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.yellow)
                         .padding(.horizontal, 6)
@@ -61,6 +59,8 @@ struct ActionBarView: View {
                     .buttonStyle(.bordered)
                     .disabled(!canTranslate || llmTaskState == .translating || llmTaskState == .refining)
                 }
+
+                Spacer()
 
                 Button {
                     onRegenerate()

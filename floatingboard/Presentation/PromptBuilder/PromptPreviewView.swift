@@ -17,59 +17,57 @@ struct PromptPreviewView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 12) {
-                Text("Prompt Preview")
+            HStack(alignment: .center, spacing: 10) {
+                Text("Preview")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
 
                 Spacer()
 
-                Picker("Preview Mode", selection: selectionBinding) {
+                Picker("", selection: selectionBinding) {
                     Text("Generated").tag(PromptPreviewMode.generated)
                     Text("Edited").tag(PromptPreviewMode.edited)
                     Text("Refined").tag(PromptPreviewMode.refined).disabled(refinedPrompt == nil)
                     Text("Translated").tag(PromptPreviewMode.translated).disabled(translatedPrompt == nil)
                 }
                 .pickerStyle(.segmented)
-                .frame(maxWidth: .infinity)
+                .labelsHidden()
+                .frame(width: 420)
             }
 
             HStack(spacing: 8) {
-                // Current mode badge
                 switch previewMode {
                 case .generated:
-                    Text("BASE")
+                    Text("Generated")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                 case .edited:
-                    Text("EDITED")
+                    Text("Edited")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tint)
                 case .refined:
-                    Text("REFINED")
+                    Text("Refined")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tint)
                 case .translated:
-                    Text("TRANSLATED")
+                    Text("Translated")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tint)
                 }
 
-                // Dirty/outdated badges (only for edited mode)
                 if previewMode == .edited && isEditedDirty {
-                    Text("DIRTY")
+                    Text("Unsaved edits")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.orange)
                 }
                 if previewMode == .edited && isEditedOutdated {
-                    Text("STALE")
+                    Text("Outdated")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.yellow)
                 }
 
-                // LLM stale badge
                 if llmTaskState == .stale {
-                    Text("STALE")
+                    Text("Outdated")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.yellow)
                 }
@@ -84,7 +82,7 @@ struct PromptPreviewView: View {
                         .textSelection(.enabled)
                         .padding(12)
                 }
-                .frame(minHeight: 220, maxHeight: .infinity)
+                .frame(minHeight: 150, maxHeight: .infinity)
                 .background(Color(nsColor: .textBackgroundColor).opacity(0.8))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .overlay(
@@ -97,7 +95,7 @@ struct PromptPreviewView: View {
                     .font(.system(.body, design: .monospaced))
                     .scrollContentBackground(.hidden)
                     .padding(8)
-                    .frame(minHeight: 220, maxHeight: .infinity)
+                    .frame(minHeight: 150, maxHeight: .infinity)
                     .background(Color(nsColor: .textBackgroundColor).opacity(0.8))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -113,7 +111,7 @@ struct PromptPreviewView: View {
                         .textSelection(.enabled)
                         .padding(12)
                 }
-                .frame(minHeight: 220, maxHeight: .infinity)
+                .frame(minHeight: 150, maxHeight: .infinity)
                 .background(Color(nsColor: .textBackgroundColor).opacity(0.8))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .overlay(
@@ -129,7 +127,7 @@ struct PromptPreviewView: View {
                         .textSelection(.enabled)
                         .padding(12)
                 }
-                .frame(minHeight: 220, maxHeight: .infinity)
+                .frame(minHeight: 150, maxHeight: .infinity)
                 .background(Color(nsColor: .textBackgroundColor).opacity(0.8))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .overlay(
@@ -144,7 +142,6 @@ struct PromptPreviewView: View {
                     .foregroundStyle(.red)
             }
 
-            // LLM error display
             if case .failed(let error) = llmTaskState {
                 Text(error.localizedDescription)
                     .font(.caption)

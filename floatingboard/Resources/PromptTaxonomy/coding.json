@@ -57,7 +57,7 @@
       "id": "context",
       "title": "작업 대상",
       "displayOrder": 1,
-      "maxVisibleKeywords": 6
+      "maxVisibleKeywords": 8
     },
     {
       "id": "priority",
@@ -132,6 +132,7 @@
       "defaultKeywordIDs": [
         "api",
         "architecture",
+        "migration",
         "maintainability",
         "preserve-style",
         "no-breaking-api",
@@ -344,6 +345,7 @@
         "api",
         "ui",
         "documentation",
+        "maintainability",
         "minimal-change",
         "backward-compatible",
         "impact-analysis",
@@ -583,6 +585,176 @@
       ]
     },
     {
+      "id": "networking",
+      "groupID": "context",
+      "type": "context",
+      "title": "네트워킹/HTTP",
+      "promptFragment": "The work involves network requests, HTTP clients, WebSocket connections, or API communication layers.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "refactor",
+        "feature-addition",
+        "testing"
+      ]
+    },
+    {
+      "id": "concurrency",
+      "groupID": "context",
+      "type": "context",
+      "title": "동시성/비동기",
+      "promptFragment": "The work involves concurrency, threading, async/await patterns, or race-condition-prone code.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "refactor",
+        "feature-addition",
+        "testing"
+      ]
+    },
+    {
+      "id": "caching",
+      "groupID": "context",
+      "type": "context",
+      "title": "캐싱",
+      "promptFragment": "The work involves caching strategies, cache invalidation, or memoization logic.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "refactor",
+        "bugfix",
+        "feature-addition",
+        "initial-planning"
+      ]
+    },
+    {
+      "id": "permission",
+      "groupID": "context",
+      "type": "context",
+      "title": "권한 관리",
+      "promptFragment": "The work involves role-based access control, permission checks, or authorization boundaries.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "refactor"
+      ]
+    },
+    {
+      "id": "search",
+      "groupID": "context",
+      "type": "context",
+      "title": "검색",
+      "promptFragment": "The work involves search functionality, filtering, indexing, or query optimization.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "refactor"
+      ]
+    },
+    {
+      "id": "notification",
+      "groupID": "context",
+      "type": "context",
+      "title": "알림 시스템",
+      "promptFragment": "The work involves push notifications, in-app alerts, email triggers, or event-driven notification pipelines.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "analytics",
+      "groupID": "context",
+      "type": "context",
+      "title": "데이터 분석/트래킹",
+      "promptFragment": "The work involves analytics events, tracking pixels, metrics collection, or data pipelines.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "initial-planning",
+        "implementation",
+        "feature-addition"
+      ]
+    },
+    {
+      "id": "i18n",
+      "groupID": "context",
+      "type": "context",
+      "title": "다국어/로컬라이제이션",
+      "promptFragment": "The work involves localization, internationalization, locale-specific formatting, or string catalogs.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "refactor",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "import-export",
+      "groupID": "context",
+      "type": "context",
+      "title": "가져오기/내보내기",
+      "promptFragment": "The work involves data import/export, file parsing, serialization, or format conversion.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "feature-addition",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "migration",
+      "groupID": "context",
+      "type": "context",
+      "title": "마이그레이션",
+      "promptFragment": "The work involves framework migration, data migration, schema evolution, or platform transition.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "planning-revision",
+        "refactor",
+        "implementation",
+        "feature-removal"
+      ]
+    },
+    {
+      "id": "ci-cd",
+      "groupID": "context",
+      "type": "context",
+      "title": "CI/CD 파이프라인",
+      "promptFragment": "The work involves CI/CD pipelines, build automation, deployment scripts, or release workflows.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "feature-addition",
+        "refactor"
+      ]
+    },
+    {
+      "id": "build-system",
+      "groupID": "context",
+      "type": "context",
+      "title": "빌드 시스템",
+      "promptFragment": "The work affects build configuration, dependency management, package manifests, or compilation toolchain.",
+      "isPrimary": false,
+      "supportedSubtopicIDs": [
+        "implementation",
+        "bugfix",
+        "refactor",
+        "feature-addition"
+      ]
+    },
+    {
       "id": "readability",
       "groupID": "priority",
       "type": "priority",
@@ -698,8 +870,7 @@
       "isPrimary": false,
       "supportedSubtopicIDs": [
         "implementation",
-        "feature-addition",
-        "ui"
+        "feature-addition"
       ]
     },
     {
@@ -1089,6 +1260,9 @@
         "security",
         "architecture",
         "state-management",
+        "caching",
+        "permission",
+        "analytics",
         "maintainability",
         "scalability",
         "step-by-step-plan",
@@ -1110,6 +1284,7 @@
         "api",
         "architecture",
         "security",
+        "migration",
         "maintainability",
         "scalability",
         "preserve-style",
@@ -1142,6 +1317,18 @@
         "error-handling",
         "logging",
         "config",
+        "networking",
+        "concurrency",
+        "caching",
+        "permission",
+        "search",
+        "notification",
+        "analytics",
+        "i18n",
+        "import-export",
+        "migration",
+        "ci-cd",
+        "build-system",
         "stability",
         "simplicity",
         "delivery-speed",
@@ -1177,6 +1364,13 @@
         "state-management",
         "database",
         "documentation",
+        "concurrency",
+        "caching",
+        "search",
+        "i18n",
+        "migration",
+        "ci-cd",
+        "build-system",
         "readability",
         "maintainability",
         "performance",
@@ -1213,6 +1407,14 @@
         "error-handling",
         "logging",
         "security",
+        "networking",
+        "concurrency",
+        "caching",
+        "permission",
+        "search",
+        "notification",
+        "ci-cd",
+        "build-system",
         "stability",
         "security-priority",
         "performance",
@@ -1248,6 +1450,8 @@
         "database",
         "state-management",
         "error-handling",
+        "networking",
+        "concurrency",
         "stability",
         "preserve-style",
         "no-new-dependencies",
@@ -1280,6 +1484,17 @@
         "logging",
         "config",
         "documentation",
+        "networking",
+        "concurrency",
+        "caching",
+        "permission",
+        "search",
+        "notification",
+        "analytics",
+        "i18n",
+        "import-export",
+        "ci-cd",
+        "build-system",
         "stability",
         "simplicity",
         "scalability",
@@ -1318,6 +1533,10 @@
         "database",
         "config",
         "documentation",
+        "notification",
+        "i18n",
+        "import-export",
+        "migration",
         "maintainability",
         "simplicity",
         "minimal-change",

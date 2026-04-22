@@ -32,7 +32,7 @@ final class FloatingPanelController {
 
     private func makePanel() -> FloatingPanel {
         let panel = FloatingPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 640, height: 680),
+            contentRect: NSRect(x: 0, y: 0, width: 640, height: 720),
             styleMask: [.titled, .fullSizeContentView, .closable],
             backing: .buffered,
             defer: false
@@ -45,7 +45,7 @@ final class FloatingPanelController {
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.isReleasedWhenClosed = false
-        panel.minSize = NSSize(width: 560, height: 560)
+        panel.minSize = NSSize(width: 560, height: 620)
         panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
 

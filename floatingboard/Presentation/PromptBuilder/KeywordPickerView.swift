@@ -9,15 +9,14 @@ struct KeywordPickerView: View {
     @State private var isExpanded = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 14) {
             ForEach(displayGroups, id: \.id) { group in
-                ScrollView(.horizontal) {
-                    HStack(spacing: 6) {
-                        Text(group.title)
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                            .fixedSize()
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(group.title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
 
+                    WrappingHStack(horizontalSpacing: 8, verticalSpacing: 8) {
                         ForEach(displayKeywords(for: group), id: \.id) { keyword in
                             Button {
                                 onToggle(keyword.id)
@@ -36,7 +35,6 @@ struct KeywordPickerView: View {
                         }
                     }
                 }
-                .scrollIndicators(.hidden)
             }
 
             if shouldShowExpansionToggle {
@@ -45,7 +43,7 @@ struct KeywordPickerView: View {
                         isExpanded.toggle()
                     }
                 } label: {
-                    Label(isExpanded ? "Collapse" : expansionTitle, systemImage: isExpanded ? "chevron.up" : "chevron.down")
+                    Label(isExpanded ? "Less" : expansionTitle, systemImage: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption.weight(.medium))
                 }
                 .buttonStyle(.plain)
@@ -64,7 +62,7 @@ struct KeywordPickerView: View {
 
     private var expansionTitle: String {
         let hiddenGroupCount = max(0, groups.count - 2)
-        return hiddenGroupCount > 0 ? "Show more (\(hiddenGroupCount) groups)" : "Show more"
+        return hiddenGroupCount > 0 ? "More (\(hiddenGroupCount))" : "More"
     }
 
     private func displayKeywords(for group: KeywordGroup) -> [KeywordOption] {

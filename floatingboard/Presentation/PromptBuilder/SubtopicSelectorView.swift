@@ -6,8 +6,12 @@ struct SubtopicSelectorView: View {
     let onSelect: (String) -> Void
 
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Subtopic")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            WrappingHStack(horizontalSpacing: 8, verticalSpacing: 8) {
                 ForEach(subtopics, id: \.id) { subtopic in
                     Button {
                         onSelect(subtopic.id)
@@ -18,6 +22,5 @@ struct SubtopicSelectorView: View {
                 }
             }
         }
-        .scrollIndicators(.hidden)
     }
 }
