@@ -279,6 +279,151 @@
 
 ---
 
+# Phase 3A: Selection UI Drill-down 개선 🧪
+
+목표: `docs/selection-ui-redesign-plan.md` 기준으로 Selection 영역을 접이식 disclosure에서 명확한 선택 작업 영역으로 재구성한다.
+범위: Draft 고정 높이 유지, Subtopic drill-down, summary row, Keyword row layout, localization, 빌드 검증.
+제외: Preview 재도입, LLM 기능 추가, taxonomy schema 변경.
+
+완료 기준:
+- Draft는 고정 180pt로 유지된다
+- Selection은 기본적으로 보이며 접이식 disclosure가 아니다
+- 초기 진입 시 자동 선택된 Subtopic이 있더라도 Subtopic 선택 화면이 먼저 보인다
+- Subtopic 선택 후 Subtopic 목록은 한 줄 summary로 접힌다
+- summary row 클릭 시 Subtopic 선택 화면으로 돌아간다
+- Keyword groups는 label + chips row 구조로 읽힌다
+- 신규 사용자 대면 문자열은 localization API를 사용한다
+- 빌드가 성공한다
+
+## 27. Selection 상태 모델 정리
+
+- [x] `SelectionPanelView` 전용 step 상태 정의
+  - `SelectionStep.subtopic`
+  - `SelectionStep.keywords`
+- [x] 초기 진입은 항상 `.subtopic`으로 시작
+- [x] Subtopic chip을 사용자가 직접 선택하면 `.keywords`로 전환
+- [x] summary row 클릭 시 `.subtopic`으로 전환
+- [x] 자동 선택된 Subtopic과 사용자 명시 선택을 구분하는 view-only 상태 추가
+  - 권장 이름: `hasUserSelectedSubtopic`
+  - 자동 선택된 Subtopic은 keyword mode 진입 조건으로 보지 않음
+- [x] ViewModel의 자동 Subtopic 선택 로직은 유지하고, UI 상태에서만 drill-down 첫 화면을 제어
+
+완료 기준: 첫 렌더에서 기본 Subtopic 값이 있어도 Subtopic 선택 화면이 먼저 표시됨
+
+## 28. SelectionPanelView 추가
+
+- [x] `floatingboard/Presentation/PromptBuilder/SelectionPanelView.swift` 추가
+- [x] `SelectionPanelView` 입력 정의
+  - `topics`, `selectedTopicID`
+  - `subtopics`, `selectedSubtopicID`
+  - `visibleKeywordGroups`
+  - `keywordsForGroup`
+  - `isSelected`
+  - `selectedKeywordTitles`
+  - `onSelectSubtopic`
+  - `onToggleKeyword`
+- [x] Selection panel 기본 구조 구현
+  - panel radius: design-system `CornerRadius.card` 기준 10pt
+  - panel padding: design-system `Spacing.md` 기준 16pt
+  - panel은 남은 높이를 받고 내부에서만 스크롤
+- [x] 사용자 대면 문자열은 `String(localized:)` 또는 SwiftUI `Text("key")` 사용
+
+완료 기준: `PromptBuilderView` 밖에서 재사용 가능한 Selection 전용 컴포넌트가 존재함
+
+## 29. Topic 표시 정책 정리
+
+- [x] MVP에서는 Topic을 독립 selection step으로 만들지 않음
+- [x] 단일 Topic은 `CompactTopicPillView` 스타일의 읽기 전용 pill로 표시
+- [x] Topic 표시 위치는 `SelectionPanelView` 상단으로 고정
+- [x] `TopicSelectorView`를 직접 유지할 경우 Selection flow와 충돌하지 않게 클릭 UX를 제한
+
+완료 기준: Topic이 공간을 낭비하지 않고 Selection context만 제공함
+
+## 30. Subtopic 선택 모드 구현
+
+- [x] Subtopic 선택 화면 구성
+  - title: `Subtopic`
+  - wrapping chip grid
+- [x] Subtopic chip 클릭 시 실행 순서
+  - `onSelectSubtopic(id)`
+  - `hasUserSelectedSubtopic = true`
+  - `selectionStep = .keywords`
+- [x] `SubtopicSelectorView` title 중복 정리
+  - 필요 시 `showsTitle: Bool` 옵션 추가
+  - title 렌더링 책임은 `SelectionPanelView`가 갖도록 조정
+
+완료 기준: 사용자가 Subtopic을 선택하면 목록이 사라지고 Keyword 화면으로 전환됨
+
+## 31. Keyword 모드 summary row 구현
+
+- [x] Keyword 모드 상단에 summary row 추가
+- [x] summary row 내용
+  - selected subtopic title
+  - selected keyword count
+  - selected keyword title 최대 2개
+  - 오른쪽 chevron icon
+- [x] row 전체 클릭 시 `selectionStep = .subtopic`
+- [x] row height는 32-36pt 범위로 유지
+- [x] macOS 기본 Button feedback 또는 최소 hover/pressed 상태 적용
+
+완료 기준: summary row만으로 현재 선택 상태를 파악하고 Subtopic 선택 화면으로 돌아갈 수 있음
+
+## 32. KeywordPickerView row layout 변경
+
+- [x] group title을 상단 헤더에서 좌측 고정 폭 라벨로 재배치
+  - label width: 84-100pt 범위
+  - 권장 시작값: 92pt
+- [x] 오른쪽 영역은 기존 `WrappingHStack` 유지
+- [x] row spacing은 14-16pt 범위
+- [x] chip wrapping spacing은 horizontal/vertical 8pt
+- [x] selected chip은 checkmark + accent tinted background 유지
+- [x] unselected chip은 muted background 유지
+
+완료 기준: 각 Keyword group이 `label-left + chips-right` 구조로 읽힘
+
+## 33. More 확장/축소 동작 보존
+
+- [x] 기존 global `More` 동작 유지
+  - 축소 시 첫 2개 group 표시
+  - group별 collapsed keyword limit 적용
+- [x] 확장/축소 상태 모두 같은 row layout 사용
+- [x] 축소 상태의 selected overflow keyword 유지 로직 보존
+- [x] 2차 개선 후보로 group별 More 검토 항목 남김
+
+완료 기준: More 클릭 후에도 layout이 흔들리지 않고 선택된 overflow keyword가 사라지지 않음
+
+## 34. PromptBuilderView 통합
+
+- [x] 기존 `selectionDisclosure` 제거
+- [x] `PromptBuilderView` 구조를 `Draft -> SelectionPanelView -> ActionBar`로 단순화
+- [x] Preview는 재도입하지 않음
+- [x] Draft 고정 높이 180pt 유지
+- [x] ActionBar 동작은 기존 연결 유지
+  - copy
+  - regenerate
+  - refine
+  - translate
+
+완료 기준: Prompt Builder의 주요 화면 흐름이 Draft, Selection, Action으로 정리됨
+
+## 35. Selection UI 검증
+
+- [x] 빌드 검증
+  - `xcodebuild -scheme floatingboard -destination 'platform=macOS' build`
+- [ ] 수동 검증
+  - [ ] 첫 진입 시 Subtopic 선택 화면 표시
+  - [ ] Subtopic 선택 후 Keyword 화면 전환
+  - [ ] summary row에 Subtopic title + keyword count 표시
+  - [ ] summary row 클릭 시 Subtopic 화면 복귀
+  - [ ] Keyword group row layout 가독성 확인
+  - [ ] More 확장/축소 후 selected overflow keyword 유지
+  - [ ] Draft 높이 180pt 유지
+  - [ ] Preview가 표시되지 않음
+
+완료 기준: Selection drill-down 플로우가 문서 기준으로 동작하고 빌드가 성공함
+
+---
+
 # Phase 3 이후로 미루는 것
 
 - [ ] 참고 문서 연결 (Phase 4)

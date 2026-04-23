@@ -9,12 +9,14 @@ struct KeywordPickerView: View {
     @State private var isExpanded = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             ForEach(displayGroups, id: \.id) { group in
-                VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: 12) {
                     Text(group.title)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
+                        .frame(width: 92, alignment: .leading)
+                        .padding(.top, 6)
 
                     WrappingHStack(horizontalSpacing: 8, verticalSpacing: 8) {
                         ForEach(displayKeywords(for: group), id: \.id) { keyword in
@@ -34,6 +36,7 @@ struct KeywordPickerView: View {
                             .buttonStyle(CompactChipButtonStyle(isSelected: isSelected(keyword.id)))
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
 
