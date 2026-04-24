@@ -2,6 +2,111 @@
 
 ---
 
+# 현재 우선순위 실행 체크리스트 (2026-04-24 기준)
+
+> 아래 체크리스트는 **지금 바로 실행할 순서**를 정리한 요약본이다.  
+> 하단의 Phase별 상세 TODO는 유지하되, 실제 작업 순서는 이 섹션을 우선 기준으로 삼는다.
+
+## P0. 현재 사용자 흐름 완결
+
+### 1. LLM 결과 표시 방식 확정
+- [ ] `Preview`를 현재 빌더 흐름에 재도입할지 결정
+- [ ] 또는 `Draft -> Selection -> Action` 구조 안에서 refine/translate 결과 표시 UX를 새로 정의
+- [ ] 결정 사항을 `TODO.md`, `README.md`, 관련 계획 문서에 동기화
+
+완료 기준:
+- refine/translate 결과를 사용자가 어디서 보고, 편집하고, 복사하는지 한 문장으로 설명 가능
+
+### 2. AI 설정값을 실제 ViewModel에 연결
+- [ ] `@AppStorage`의 provider/model/endpoint/temperature/maxTokens를 `PromptBuilderViewModel.activeModelConfig`에 주입
+- [ ] 앱 시작 시 초기 `activeModelConfig`를 로드
+- [ ] 설정 변경 시 `activeModelConfig`를 즉시 갱신
+- [ ] 설정 변경 시 기존 refined/translated 결과를 `stale` 처리
+
+완료 기준:
+- 설정창에서 값을 바꾸면 Refine/Translate 활성 상태와 stale 상태가 즉시 반영됨
+
+### 3. Refine / Translate 플로우 완주
+- [ ] `ActionBarView`의 Refine / Translate 버튼 동작 점검
+- [ ] 결과 표시 UI 연결
+- [ ] `loading / failed / cancelled / stale` 상태를 사용자에게 노출
+- [ ] 복사 대상이 현재 선택된 결과와 일치하는지 확인
+
+완료 기준:
+- 설정 → Refine → 결과 확인 → Translate → 결과 복사가 끊김 없이 동작
+
+## P1. 검증 가능한 상태 만들기
+
+### 4. Phase 3 테스트 추가
+- [ ] `RefinePromptUseCase` 단위 테스트
+- [ ] `TranslatePromptUseCase` 단위 테스트
+- [ ] `KeychainRepositoryImpl` roundtrip 테스트
+- [ ] fingerprint 캐시 재사용 테스트
+- [ ] selection 변경 시 stale 전파 테스트
+- [ ] `PromptBuilderViewModel` refine/translate 상태 전이 테스트
+- [ ] cancellation 분기 테스트
+
+완료 기준:
+- Phase 3 신규 테스트 항목을 대부분 자동 검증으로 커버
+
+### 5. 패널 닫기 / 복원 회귀 검증
+- [ ] 패널 닫기 시 `cancelActiveLLMTask() -> saveDraft() -> close()` 순서 수동 확인
+- [ ] 앱 재실행 후 draft / edited 상태 복원 수동 확인
+- [ ] 가능하면 관련 테스트 추가
+
+완료 기준:
+- 패널 닫기 후 재실행해도 직전 상태가 복원됨
+
+### 6. `xcodebuild test` 안정화
+- [ ] unit test만 우선 안정적으로 통과시키기
+- [ ] UI test가 멈추는 원인 분리
+- [ ] 템플릿 수준 UI test를 정리하거나 실제 시나리오 기반으로 교체
+- [ ] 로컬/CI에서 일관되게 끝나는 test 명령 확정
+
+완료 기준:
+- `xcodebuild test`가 사람 개입 없이 종료됨
+
+## P2. 문서와 현재 상태 동기화
+
+### 7. 문서 정합성 정리
+- [ ] `README.md`의 현재 UI 흐름 설명 최신화
+- [ ] `TODO.md`의 완료/미완료 체크 상태 최신화
+- [ ] `docs/spec.md` / 계획 문서와 현재 구현 상태 차이 정리
+- [ ] preview 제거 여부와 Phase 3 진행 상태를 문서에 명시
+
+완료 기준:
+- 문서만 읽어도 현재 제품 상태를 오해하지 않음
+
+### 8. Selection UI 수동 검증 마무리
+- [ ] 첫 진입 시 Subtopic 선택 화면 표시
+- [ ] Subtopic 선택 후 Keyword 화면 전환
+- [ ] summary row 동작 확인
+- [ ] More 확장/축소 후 선택 유지 확인
+- [ ] Draft 높이 180pt 유지 확인
+- [ ] Preview 비노출 정책 확인
+
+완료 기준:
+- Selection UI 관련 수동 검증 항목 체크 가능
+
+## P3. 다음 백로그
+
+### 9. Preferences placeholder 구현
+- [ ] General 탭 실제 구현
+- [ ] Documents 탭 실제 구현
+- [ ] Hotkey 탭 실제 구현
+
+### 10. Phase 4 준비
+- [ ] 참고 문서 등록 UX 설계
+- [ ] security-scoped bookmark 설계
+- [ ] references 합성 규칙 구현
+
+### 11. Phase 5 준비
+- [ ] 키보드 UX 개선
+- [ ] taxonomy 확장성 정리
+- [ ] 테스트 범위 확대
+
+---
+
 # Phase 1: 구조화 빌더 기반 UI ✅
 
 목표: 구조화 빌더 기반 UI를 로컬만으로 완성한다.  
